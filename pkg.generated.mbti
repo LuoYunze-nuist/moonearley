@@ -1,0 +1,57 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "LuoYunze-nuist/moonearley"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn token(String, String, Int, Int) -> Token
+
+pub fn validate_tokens(Array[Token]) -> Result[Unit, Problem]
+
+// Errors
+
+// Types and methods
+pub(all) enum Problem {
+  InvalidGrammar(String)
+  InvalidToken(Int, String)
+  Limit(String, Int)
+  InvalidNode(Int)
+  InvalidLimit(String)
+  Syntax(Int, String)
+} derive(Eq, @debug.Debug)
+pub fn Problem::equal(Self, Self) -> Bool
+pub fn Problem::not_equal(Self, Self) -> Bool
+pub fn Problem::to_repr(Self) -> @debug.Repr
+
+pub(all) struct Rule {
+  lhs : String
+  rhs : Array[Symbol]
+  label : String
+} derive(Eq, @debug.Debug)
+pub fn Rule::equal(Self, Self) -> Bool
+pub fn Rule::not_equal(Self, Self) -> Bool
+pub fn Rule::to_repr(Self) -> @debug.Repr
+
+pub(all) enum Symbol {
+  Terminal(String)
+  Nonterminal(String)
+} derive(Eq, @debug.Debug)
+pub fn Symbol::equal(Self, Self) -> Bool
+pub fn Symbol::not_equal(Self, Self) -> Bool
+pub fn Symbol::to_repr(Self) -> @debug.Repr
+
+pub(all) struct Token {
+  kind : String
+  text : String
+  start : Int
+  end : Int
+} derive(Eq, @debug.Debug)
+pub fn Token::equal(Self, Self) -> Bool
+pub fn Token::not_equal(Self, Self) -> Bool
+pub fn Token::to_repr(Self) -> @debug.Repr
+
+// Type aliases
+
+// Traits
