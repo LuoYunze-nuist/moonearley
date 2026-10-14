@@ -1,9 +1,9 @@
 ///|
 /// Structured rejection diagnostics; token indices and character offsets are distinct.
 pub(all) struct ParseDiagnostic {
-  token_index : Int
-  char_start : Int
-  char_end : Int
+  token_index : Int32
+  char_start : Int32
+  char_end : Int32
   actual_kind : String?
   expected_kinds : Array[String]
   at_eof : Bool
@@ -54,7 +54,7 @@ pub fn Report::diagnostic(self : Report) -> ParseDiagnostic? {
 /// A bounded token window around the failure, or the end for an accepted report.
 pub fn Report::context(
   self : Report,
-  radius : Int,
+  radius : Int32,
 ) -> Result[Array[Token], Problem] {
   if radius < 0 || radius > 4096 {
     return Err(InvalidLimit("context radius"))
@@ -76,11 +76,11 @@ pub fn Report::context(
 
 ///|
 /// Total tokens includes unmatched input; forest leaves contain only scanned tokens.
-pub fn Forest::token_count(self : Forest) -> Int {
+pub fn Forest::token_count(self : Forest) -> Int32 {
   self.tokens.length()
 }
 
 ///|
-pub fn Forest::rule_count(self : Forest) -> Int {
+pub fn Forest::rule_count(self : Forest) -> Int32 {
   self.rules.length()
 }

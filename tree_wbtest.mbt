@@ -1,5 +1,5 @@
 ///|
-fn tree_test_leaf(kind : String, text : String, index : Int) -> Tree {
+fn tree_test_leaf(kind : String, text : String, index : Int32) -> Tree {
   TokenNode({
     token: token(kind, text, index * 3, index * 3 + 2),
     span: { start: index, end: index + 1, },

@@ -95,7 +95,7 @@ python scripts/audit_sources.py --require-production 1500
 python scripts/audit_history.py --minimum-nonempty 20
 ```
 
-本地 Windows / moon 0.1.20260920 / moonc v0.10.14+7d59c7ec9：
+本地 Windows / moon 0.1.20261012 / moonc v0.10.15+943464bfa：
 102 个命名测试在 wasm-gc、wasm、JS 各全通过；三个示例各目标运行。
 独立 span-oracle 992 识别用例；固定 Lark SHA 的 252 接受性与推导数对照在 JS、wasm-gc 一致。
 不是性能比较。Native 本机缺少 cc/gcc/clang，不宣称本地已执行；CI 含 native job。

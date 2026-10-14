@@ -1,8 +1,8 @@
 ///|
 fn frontend_test_limits(
-  chars : Int,
-  rules : Int,
-  symbols : Int,
+  chars : Int32,
+  rules : Int32,
+  symbols : Int32,
 ) -> FrontendLimits {
   { max_chars: chars, max_rules: rules, max_symbols: symbols, }
 }

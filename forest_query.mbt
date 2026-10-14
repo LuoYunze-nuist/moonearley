@@ -1,6 +1,6 @@
 ///|
 fn forest_query_budget(
-  work_limit : Int,
+  work_limit : Int32,
 ) -> Result[ForestAnalysisBudget, Problem] {
   if work_limit <= 0 {
     Err(InvalidLimit("work_limit"))
@@ -14,10 +14,10 @@ fn forest_query_budget(
 /// Token leaves are terminal even if a malformed internal fixture adds families.
 fn forest_query_walk(
   forest : Forest,
-  root : Int?,
+  root : Int32?,
   productive : Array[Bool]?,
   budget : ForestAnalysisBudget,
-) -> Array[Int] raise ForestAnalysisHalt {
+) -> Array[Int32] raise ForestAnalysisHalt {
   let root = match root {
     None => return []
     Some(id) => id
@@ -66,8 +66,8 @@ fn forest_query_walk(
 
 ///|
 /// All matching IDs in allocation order; namespaces remain distinct.
-pub fn Forest::nodes_of_kind(self : Forest, kind : NodeKind) -> Array[Int] {
-  let ids : Array[Int] = []
+pub fn Forest::nodes_of_kind(self : Forest, kind : NodeKind) -> Array[Int32] {
+  let ids : Array[Int32] = []
   for id, node in self.nodes {
     if node.kind == kind {
       ids.push(id)
@@ -78,15 +78,15 @@ pub fn Forest::nodes_of_kind(self : Forest, kind : NodeKind) -> Array[Int] {
 
 ///|
 /// Search every stored symbol node, including disconnected chart material.
-pub fn Forest::symbol_nodes(self : Forest, name : String) -> Array[Int] {
+pub fn Forest::symbol_nodes(self : Forest, name : String) -> Array[Int32] {
   self.nodes_of_kind(SymbolNode(name))
 }
 
 ///|
 fn forest_query_span(
   forest : Forest,
-  start : Int,
-  end : Int,
+  start : Int32,
+  end : Int32,
 ) -> Result[Unit, Problem] {
   if start < 0 || end < start || end > forest.tokens.length() {
     Err(Syntax(start, "invalid token-index span"))
@@ -100,14 +100,14 @@ fn forest_query_span(
 /// Zero-width intervals are valid, including at the end of input.
 pub fn Forest::nodes_at_span(
   self : Forest,
-  start : Int,
-  end : Int,
-) -> Result[Array[Int], Problem] {
+  start : Int32,
+  end : Int32,
+) -> Result[Array[Int32], Problem] {
   match forest_query_span(self, start, end) {
     Err(problem) => return Err(problem)
     Ok(_) => ()
   }
-  let ids : Array[Int] = []
+  let ids : Array[Int32] = []
   for id, node in self.nodes {
     if node.start == start && node.end == end {
       ids.push(id)
@@ -120,9 +120,9 @@ pub fn Forest::nodes_at_span(
 pub fn Forest::symbol_nodes_at(
   self : Forest,
   name : String,
-  start : Int,
-  end : Int,
-) -> Result[Array[Int], Problem] {
+  start : Int32,
+  end : Int32,
+) -> Result[Array[Int32], Problem] {
   match self.nodes_at_span(start, end) {
     Err(problem) => Err(problem)
     Ok(ids) =>
@@ -135,8 +135,8 @@ pub fn Forest::symbol_nodes_at(
 /// A rejected forest has no root and therefore no root-reachable IDs.
 pub fn Forest::reachable_nodes(
   self : Forest,
-  work_limit? : Int = 1000000,
-) -> Result[Array[Int], Problem] {
+  work_limit~ : Int32 = 1000000,
+) -> Result[Array[Int32], Problem] {
   self.query_reachable(self.root, work_limit)
 }
 
@@ -144,18 +144,18 @@ pub fn Forest::reachable_nodes(
 /// Useful for chart fragments and rejected reports that have no accepted root.
 pub fn Forest::reachable_from(
   self : Forest,
-  id : Int,
-  work_limit? : Int = 1000000,
-) -> Result[Array[Int], Problem] {
+  id : Int32,
+  work_limit~ : Int32 = 1000000,
+) -> Result[Array[Int32], Problem] {
   self.query_reachable(Some(id), work_limit)
 }
 
 ///|
 fn Forest::query_reachable(
   self : Forest,
-  root : Int?,
-  work_limit : Int,
-) -> Result[Array[Int], Problem] {
+  root : Int32?,
+  work_limit : Int32,
+) -> Result[Array[Int32], Problem] {
   let budget = match forest_query_budget(work_limit) {
     Err(problem) => return Err(problem)
     Ok(budget) => budget
@@ -169,15 +169,15 @@ fn Forest::query_reachable(
 /// Finite-proof productivity over every node, independent of root reachability.
 pub fn Forest::productive_nodes(
   self : Forest,
-  work_limit? : Int = 1000000,
-) -> Result[Array[Int], Problem] {
+  work_limit~ : Int32 = 1000000,
+) -> Result[Array[Int32], Problem] {
   let budget = match forest_query_budget(work_limit) {
     Err(problem) => return Err(problem)
     Ok(budget) => budget
   }
   try {
     let productive = forest_analysis_productive(self, budget)
-    let ids : Array[Int] = []
+    let ids : Array[Int32] = []
     for id, flag in productive {
       budget.tick()
       if flag {
@@ -197,9 +197,9 @@ pub fn Forest::productive_nodes(
 /// includes disconnected productive nodes. Token leaves are never ambiguous.
 pub fn Forest::ambiguity_nodes(
   self : Forest,
-  reachable_only? : Bool = true,
-  work_limit? : Int = 1000000,
-) -> Result[Array[Int], Problem] {
+  reachable_only~ : Bool = true,
+  work_limit~ : Int32 = 1000000,
+) -> Result[Array[Int32], Problem] {
   let budget = match forest_query_budget(work_limit) {
     Err(problem) => return Err(problem)
     Ok(budget) => budget
@@ -211,7 +211,7 @@ pub fn Forest::ambiguity_nodes(
     } else {
       Array::makei(self.nodes.length(), fn(id) { id })
     }
-    let ids : Array[Int] = []
+    let ids : Array[Int32] = []
     for id in candidates {
       budget.tick()
       match self.nodes[id].kind {
@@ -271,7 +271,7 @@ fn forest_query_dot_escape(
 ///|
 fn forest_query_rule_tag(
   forest : Forest,
-  rule : Int,
+  rule : Int32,
 ) -> String raise ForestAnalysisHalt {
   if rule < 0 || rule >= forest.rules.length() {
     raise ForestAnalysisHalt(
@@ -284,7 +284,7 @@ fn forest_query_rule_tag(
 ///|
 fn forest_query_node_label(
   forest : Forest,
-  id : Int,
+  id : Int32,
 ) -> String raise ForestAnalysisHalt {
   let node = forest.nodes[id]
   let span = "[\{node.start},\{node.end})"
@@ -314,8 +314,8 @@ fn forest_query_node_label(
 /// the entire chart snapshot. Work also charges every escaped label character.
 pub fn Forest::to_dot(
   self : Forest,
-  reachable_only? : Bool = true,
-  work_limit? : Int = 1000000,
+  reachable_only~ : Bool = true,
+  work_limit~ : Int32 = 1000000,
 ) -> Result[String, Problem] {
   let budget = match forest_query_budget(work_limit) {
     Err(problem) => return Err(problem)

@@ -137,6 +137,6 @@ pub fn Grammar::terminals(self : Grammar) -> Array[String] {
 
 ///|
 /// Includes epsilon rules and distinct labels sharing an expansion.
-pub fn Grammar::rule_count(self : Grammar) -> Int {
+pub fn Grammar::rule_count(self : Grammar) -> Int32 {
   self.rules.length()
 }

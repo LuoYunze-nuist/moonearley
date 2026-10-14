@@ -2,10 +2,10 @@
 
 ## Scope and local environment
 
-Windows, 2026-10-14 Asia/Shanghai. Official stable moon 0.1.20260920 (914d7da),
-moonc v0.10.14+7d59c7ec9. AI tests and source inspection are not official contest acceptance.
+Windows, 2026-10-14 Asia/Shanghai. Official stable moon 0.1.20261012 (748b63c),
+moonc v0.10.15+943464bfa. AI tests and source inspection are not official contest acceptance.
 
-Production inventory: **3427 physical .mbt lines / 2747 nonblank noncomment lines**,
+Production inventory: **3435 physical .mbt lines / 2755 nonblank noncomment lines**,
 16 source files, independently reviewed substantive grammar/parser/forest/session engines.
 `python scripts/audit_sources.py --require-production 1500` reproduces the full inventory.
 Exclude tests, examples, generated interfaces, benchmark/vendor/generated directories;
@@ -43,3 +43,13 @@ an external local delivery record. Public Actions and Release are the remote evi
 The Chinese application and account credential stores are outside this repository.
 Privacy scanner examines worktree and reachable Git history; package ZIP content is
 also reviewed. Passing a scanner is not a guarantee of absence of every possible secret.
+
+## Toolchain compatibility repair
+
+The first actual GitHub run (38536907851) installed moon 0.1.20261012 and
+rejected the older formatter spelling (`Int` and `parameter?`), not a test result.
+An independently installed official 20261012 toolchain canonicalized sources to
+`Int32` and `parameter~`; generated public interfaces remained unchanged.
+Strict checks, builds, all 102 tests and three examples were repeated locally on
+JS, wasm and wasm-gc. This compatibility/format repair is not counted toward
+the twenty substantive development commits. Native remains CI-only.

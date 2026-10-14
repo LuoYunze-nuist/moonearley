@@ -4,7 +4,7 @@ fn forest_count_test_node(name : String, families : Array[Family]) -> Node {
 }
 
 ///|
-fn forest_count_test_forest(nodes : Array[Node], root : Int?) -> Forest {
+fn forest_count_test_forest(nodes : Array[Node], root : Int32?) -> Forest {
   { nodes, tokens: [], rules: [], root, }
 }
 

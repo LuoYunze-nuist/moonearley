@@ -1,11 +1,11 @@
 ///|
 /// All counters are cumulative for one parse/session, not reset per token.
 pub(all) struct Limits {
-  tokens : Int
-  items : Int
-  nodes : Int
-  families : Int
-  work : Int
+  tokens : Int32
+  items : Int32
+  nodes : Int32
+  families : Int32
+  work : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -48,11 +48,11 @@ pub fn Limits::validate(self : Limits) -> Result[Unit, Problem] {
 ///|
 /// Stable counters describe allocated states, not derivation counts.
 pub(all) struct Statistics {
-  tokens : Int
-  items : Int
-  nodes : Int
-  families : Int
-  work : Int
+  tokens : Int32
+  items : Int32
+  nodes : Int32
+  families : Int32
+  work : Int32
 } derive(Eq, Debug)
 
 ///|

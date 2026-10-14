@@ -1,9 +1,9 @@
 ///|
 /// Intermediate nodes encode one prefix of a production, not an AST node.
 pub(all) enum NodeKind {
-  TokenLeaf(Int)
+  TokenLeaf(Int32)
   SymbolNode(String)
-  Intermediate(Int, Int)
+  Intermediate(Int32, Int32)
 } derive(Eq, Debug)
 
 ///|
@@ -15,8 +15,8 @@ pub extend NodeKind with @moonbitlang/core/debug.Debug::{to_repr}
 ///|
 /// A family is an AND-edge; a node's families are OR-alternatives.
 pub(all) struct Family {
-  rule : Int
-  children : Array[Int]
+  rule : Int32
+  children : Array[Int32]
 } derive(Eq, Debug)
 
 ///|
@@ -29,8 +29,8 @@ pub extend Family with @moonbitlang/core/debug.Debug::{to_repr}
 /// Read-only snapshot view. Mutating its arrays cannot mutate the forest.
 pub(all) struct NodeInfo {
   kind : NodeKind
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
   alternatives : Array[Family]
 } derive(Eq, Debug)
 
@@ -43,8 +43,8 @@ pub extend NodeInfo with @moonbitlang/core/debug.Debug::{to_repr}
 ///|
 struct Node {
   kind : NodeKind
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
   families : Array[Family]
 }
 
@@ -54,7 +54,7 @@ pub struct Forest {
   nodes : Array[Node]
   tokens : Array[Token]
   rules : Array[Rule]
-  root : Int?
+  root : Int32?
 }
 
 ///|
@@ -68,17 +68,17 @@ fn copy_rule(r : Rule) -> Rule {
 }
 
 ///|
-pub fn Forest::root(self : Forest) -> Int? {
+pub fn Forest::root(self : Forest) -> Int32? {
   self.root
 }
 
 ///|
-pub fn Forest::node_count(self : Forest) -> Int {
+pub fn Forest::node_count(self : Forest) -> Int32 {
   self.nodes.length()
 }
 
 ///|
-pub fn Forest::node(self : Forest, id : Int) -> Result[NodeInfo, Problem] {
+pub fn Forest::node(self : Forest, id : Int32) -> Result[NodeInfo, Problem] {
   if id < 0 || id >= self.nodes.length() {
     return Err(InvalidNode(id))
   }
@@ -92,7 +92,7 @@ pub fn Forest::node(self : Forest, id : Int) -> Result[NodeInfo, Problem] {
 }
 
 ///|
-pub fn Forest::token_at(self : Forest, id : Int) -> Result[Token, Problem] {
+pub fn Forest::token_at(self : Forest, id : Int32) -> Result[Token, Problem] {
   if id < 0 || id >= self.tokens.length() {
     Err(InvalidToken(id, "index outside forest token snapshot"))
   } else {
@@ -101,7 +101,7 @@ pub fn Forest::token_at(self : Forest, id : Int) -> Result[Token, Problem] {
 }
 
 ///|
-pub fn Forest::rule_at(self : Forest, id : Int) -> Result[Rule, Problem] {
+pub fn Forest::rule_at(self : Forest, id : Int32) -> Result[Rule, Problem] {
   if id < 0 || id >= self.rules.length() {
     Err(InvalidGrammar("rule index outside forest snapshot"))
   } else {

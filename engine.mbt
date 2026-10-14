@@ -5,16 +5,16 @@ priv suberror Halt {
 
 ///|
 priv struct Item {
-  rule : Int
-  dot : Int
-  origin : Int
-  node : Int
+  rule : Int32
+  dot : Int32
+  origin : Int32
+  node : Int32
 }
 
 ///|
 priv struct Chart {
   items : Array[Item]
-  mut cursor : Int
+  mut cursor : Int32
 }
 
 ///|
@@ -24,9 +24,9 @@ struct Engine {
   charts : Array[Chart]
   nodes : Array[Node]
   tokens : Array[Token]
-  mut item_count : Int
-  mut family_count : Int
-  mut work : Int
+  mut item_count : Int32
+  mut family_count : Int32
+  mut work : Int32
 }
 
 ///|
@@ -34,7 +34,7 @@ struct Engine {
 pub struct Report {
   forest : Forest
   expected : Array[String]
-  furthest : Int
+  furthest : Int32
   stats : Statistics
 }
 
@@ -55,7 +55,7 @@ pub fn Report::expected(self : Report) -> Array[String] {
 
 ///|
 /// Furthest chart with at least one state, in token indices rather than source offsets.
-pub fn Report::furthest(self : Report) -> Int {
+pub fn Report::furthest(self : Report) -> Int32 {
   self.furthest
 }
 
@@ -77,9 +77,9 @@ fn Engine::tick(self : Engine) -> Unit raise Halt {
 fn Engine::node_id(
   self : Engine,
   kind : NodeKind,
-  start : Int,
-  end : Int,
-) -> Int raise Halt {
+  start : Int32,
+  end : Int32,
+) -> Int32 raise Halt {
   for i, n in self.nodes {
     self.tick()
     if n.kind == kind && n.start == start && n.end == end {
@@ -98,9 +98,9 @@ fn Engine::node_id(
 /// Pack families, not parse trees; duplicates of the same rule/children are idempotent.
 fn Engine::family(
   self : Engine,
-  node : Int,
-  rule : Int,
-  children : Array[Int],
+  node : Int32,
+  rule : Int32,
+  children : Array[Int32],
 ) -> Unit raise Halt {
   let target = self.nodes[node].families
   for f in target {
@@ -120,11 +120,11 @@ fn Engine::family(
 /// Add one finite Earley state; additional families do not require state reprocessing.
 fn Engine::item(
   self : Engine,
-  end : Int,
-  rule : Int,
-  dot : Int,
-  origin : Int,
-) -> Int raise Halt {
+  end : Int32,
+  rule : Int32,
+  dot : Int32,
+  origin : Int32,
+) -> Int32 raise Halt {
   let chart = self.charts[end]
   for it in chart.items {
     self.tick()
@@ -147,9 +147,9 @@ fn Engine::item(
 ///|
 fn Engine::advance(
   self : Engine,
-  end : Int,
+  end : Int32,
   waiting : Item,
-  child : Int,
+  child : Int32,
 ) -> Unit raise Halt {
   let prefix = self.item(end, waiting.rule, waiting.dot + 1, waiting.origin)
   self.family(prefix, waiting.rule, [waiting.node, child])
@@ -157,7 +157,7 @@ fn Engine::advance(
 
 ///|
 /// Saturate prediction and completion before scanning. Pair both nullable insertion orders.
-fn Engine::close_chart(self : Engine, end : Int) -> Unit raise Halt {
+fn Engine::close_chart(self : Engine, end : Int32) -> Unit raise Halt {
   let chart = self.charts[end]
   while chart.cursor < chart.items.length() {
     self.tick()
@@ -304,7 +304,7 @@ fn Engine::report(self : Engine) -> Report {
 pub fn parse(
   grammar : Grammar,
   tokens : Array[Token],
-  limits? : Limits = default_limits(),
+  limits~ : Limits = default_limits(),
 ) -> Result[Report, Problem] {
   match limits.validate() {
     Err(p) => return Err(p)

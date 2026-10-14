@@ -74,7 +74,7 @@ fn grammar_union_names(
 /// The offset is internal and always in 0..=symbols.length().
 fn grammar_first_suffix(
   symbols : Array[Symbol],
-  offset : Int,
+  offset : Int32,
   nullable : Map[String, Bool],
   first : Map[String, Map[String, Bool]],
 ) -> (Map[String, Bool], Bool) {

@@ -1,5 +1,5 @@
 ///|
-fn tree_extract_test_forest(source : String, count : Int) -> Forest {
+fn tree_extract_test_forest(source : String, count : Int32) -> Forest {
   let grammar = parse_grammar(source).unwrap()
   let tokens : Array[Token] = []
   for i = 0; i < count; i = i + 1 {
@@ -9,12 +9,16 @@ fn tree_extract_test_forest(source : String, count : Int) -> Forest {
 }
 
 ///|
-fn tree_extract_test_limits(trees : Int, depth : Int, work : Int) -> TreeLimits {
+fn tree_extract_test_limits(
+  trees : Int32,
+  depth : Int32,
+  work : Int32,
+) -> TreeLimits {
   { max_trees: trees, max_depth: depth, work_budget: work, }
 }
 
 ///|
-fn tree_extract_test_chain(count : Int) -> Forest {
+fn tree_extract_test_chain(count : Int32) -> Forest {
   let nodes : Array[Node] = []
   let rules : Array[Rule] = []
   for i = 0; i < count; i = i + 1 {

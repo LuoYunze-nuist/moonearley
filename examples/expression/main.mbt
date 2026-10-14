@@ -1,6 +1,6 @@
 ///|
 /// The interpreter is downstream application logic, not a semantic-action engine.
-fn evaluate(tree : @moonearley.Tree) -> Int raise {
+fn evaluate(tree : @moonearley.Tree) -> Int32 raise {
   match tree {
     TokenNode(leaf) => @string.parse_int(leaf.token.text[:])
     RuleNode(node) =>

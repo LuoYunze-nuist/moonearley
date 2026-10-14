@@ -184,7 +184,7 @@ pub fn GrammarAnalysis::is_reachable(
 /// Safe index queries distinguish a negative/out-of-range index from false.
 pub fn GrammarAnalysis::rule_is_nullable(
   self : GrammarAnalysis,
-  index : Int,
+  index : Int32,
 ) -> Bool? {
   if index < 0 || index >= self.nullable_rules.length() {
     None
@@ -196,7 +196,7 @@ pub fn GrammarAnalysis::rule_is_nullable(
 ///|
 pub fn GrammarAnalysis::rule_is_productive(
   self : GrammarAnalysis,
-  index : Int,
+  index : Int32,
 ) -> Bool? {
   if index < 0 || index >= self.productive_rules.length() {
     None
@@ -208,7 +208,7 @@ pub fn GrammarAnalysis::rule_is_productive(
 ///|
 pub fn GrammarAnalysis::rule_is_reachable(
   self : GrammarAnalysis,
-  index : Int,
+  index : Int32,
 ) -> Bool? {
   if index < 0 || index >= self.reachable_rules.length() {
     None

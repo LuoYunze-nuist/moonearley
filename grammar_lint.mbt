@@ -21,9 +21,9 @@ pub extend GrammarLintKind with @moonbitlang/core/debug.Debug::{to_repr}
 /// For a duplicate, related_rules contains the first matching expansion.
 pub(all) struct GrammarDiagnostic {
   kind : GrammarLintKind
-  rule_index : Int
+  rule_index : Int32
   rule_label : String
-  related_rules : Array[Int]
+  related_rules : Array[Int32]
   nonterminals : Array[String]
   message : String
 } derive(Eq, Debug)
@@ -35,7 +35,7 @@ pub extend GrammarDiagnostic with Eq::{equal, not_equal}
 pub extend GrammarDiagnostic with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
-fn grammar_lint_rank(kind : GrammarLintKind) -> Int {
+fn grammar_lint_rank(kind : GrammarLintKind) -> Int32 {
   match kind {
     UnreachableRule => 0
     NonproductiveRule => 1
@@ -171,12 +171,12 @@ fn grammar_component_rules(
   component : Array[String],
   nullable : Map[String, Bool],
   epsilon_only : Bool,
-) -> Array[Int] {
+) -> Array[Int32] {
   let members : Map[String, Bool] = Map([])
   for name in component {
     members[name] = true
   }
-  let indices : Array[Int] = []
+  let indices : Array[Int32] = []
   for index, rule in grammar.rules {
     if members.contains(rule.lhs) {
       for name in grammar_rule_dependencies(rule, nullable, epsilon_only) {
@@ -228,7 +228,7 @@ fn grammar_cycle_diagnostics(
 ///|
 /// Detect structural duplicate expansions, ignoring labels but respecting
 /// Terminal/Nonterminal identity. Each later duplicate points at the earliest.
-fn grammar_first_duplicate(grammar : Grammar, index : Int) -> Int? {
+fn grammar_first_duplicate(grammar : Grammar, index : Int32) -> Int32? {
   let rule = grammar.rules[index]
   for previous in 0..<index {
     let candidate = grammar.rules[previous]

@@ -28,7 +28,7 @@ fn Engine::clone(self : Engine) -> Engine {
 /// Opening a session can fail during nullable closure before the first token.
 pub fn Session::new(
   grammar : Grammar,
-  limits? : Limits = default_limits(),
+  limits~ : Limits = default_limits(),
 ) -> Result[Session, Problem] {
   match limits.validate() {
     Err(p) => return Err(p)

@@ -2,11 +2,11 @@
 /// An input or budget failure. Results never silently report budget exhaustion as rejection.
 pub(all) enum Problem {
   InvalidGrammar(String)
-  InvalidToken(Int, String)
-  Limit(String, Int)
-  InvalidNode(Int)
+  InvalidToken(Int32, String)
+  Limit(String, Int32)
+  InvalidNode(Int32)
   InvalidLimit(String)
-  Syntax(Int, String)
+  Syntax(Int32, String)
 } derive(Eq, Debug)
 
 ///|
@@ -29,13 +29,13 @@ pub(all) struct Rule {
 pub(all) struct Token {
   kind : String
   text : String
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
 } derive(Eq, Debug)
 
 ///|
 /// Snapshot a token, preventing accidental dependence on caller arrays.
-pub fn token(kind : String, text : String, start : Int, end : Int) -> Token {
+pub fn token(kind : String, text : String, start : Int32, end : Int32) -> Token {
   { kind, text, start, end, }
 }
 

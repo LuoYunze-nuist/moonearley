@@ -2,9 +2,9 @@
 /// Budgets count UTF-16 source units, productions, and total RHS symbols.
 /// All limits must be positive and at most ten million. Comments count as source.
 pub(all) struct FrontendLimits {
-  max_chars : Int
-  max_rules : Int
-  max_symbols : Int
+  max_chars : Int32
+  max_rules : Int32
+  max_symbols : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -51,21 +51,21 @@ priv enum FrontendKind {
 ///|
 priv struct FrontendToken {
   kind : FrontendKind
-  offset : Int
+  offset : Int32
 }
 
 ///|
-fn frontend_name_start(c : Int) -> Bool {
+fn frontend_name_start(c : Int32) -> Bool {
   (c >= 65 && c <= 90) || (c >= 97 && c <= 122) || c == 95
 }
 
 ///|
-fn frontend_name_part(c : Int) -> Bool {
+fn frontend_name_part(c : Int32) -> Bool {
   frontend_name_start(c) || (c >= 48 && c <= 57)
 }
 
 ///|
-fn frontend_hex(c : Int) -> Int? {
+fn frontend_hex(c : Int32) -> Int32? {
   if c >= 48 && c <= 57 {
     Some(c - 48)
   } else if c >= 65 && c <= 70 {
@@ -79,7 +79,7 @@ fn frontend_hex(c : Int) -> Int? {
 
 ///|
 /// Four hexadecimal digits, diagnosed at the offending digit or EOF.
-fn frontend_hex4(source : String, at : Int) -> Result[Int, Problem] {
+fn frontend_hex4(source : String, at : Int32) -> Result[Int32, Problem] {
   let mut value = 0
   for i = 0; i < 4; i = i + 1 {
     if at + i >= source.length() {
@@ -95,7 +95,10 @@ fn frontend_hex4(source : String, at : Int) -> Result[Int, Problem] {
 
 ///|
 /// Decode a Unicode escape; surrogate halves must form one valid pair.
-fn frontend_unicode(source : String, at : Int) -> Result[(Char, Int), Problem] {
+fn frontend_unicode(
+  source : String,
+  at : Int32,
+) -> Result[(Char, Int32), Problem] {
   let high = match frontend_hex4(source, at) {
     Ok(value) => value
     Err(problem) => return Err(problem)
@@ -129,7 +132,10 @@ fn frontend_unicode(source : String, at : Int) -> Result[(Char, Int), Problem] {
 
 ///|
 /// Both quote styles share escapes; literal CR/LF and controls are rejected.
-fn frontend_quoted(source : String, at : Int) -> Result[(String, Int), Problem] {
+fn frontend_quoted(
+  source : String,
+  at : Int32,
+) -> Result[(String, Int32), Problem] {
   let quote = source[at].to_int()
   let out = StringBuilder()
   let mut pos = at + 1
@@ -378,7 +384,7 @@ fn frontend_parse_rules(
 /// Lexical/syntax failures precede semantic validation; exhaustion is never rejection.
 pub fn parse_grammar(
   source : String,
-  limits? : FrontendLimits = default_frontend_limits(),
+  limits~ : FrontendLimits = default_frontend_limits(),
 ) -> Result[Grammar, Problem] {
   match limits.validate() {
     Err(problem) => return Err(problem)

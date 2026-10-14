@@ -2,9 +2,9 @@
 /// Extraction budgets are independent of the parser's chart budgets.
 /// Depth counts AST rules/tokens, never Intermediate prefix nodes.
 pub(all) struct TreeLimits {
-  max_trees : Int
-  max_depth : Int
-  work_budget : Int
+  max_trees : Int32
+  max_depth : Int32
+  work_budget : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -60,7 +60,7 @@ pub fn TreeExtractionStatus::truncated(self : TreeExtractionStatus) -> Bool {
 pub struct TreeExtraction {
   trees : Array[Tree]
   status : TreeExtractionStatus
-  work : Int
+  work : Int32
 }
 
 ///|
@@ -69,7 +69,7 @@ pub fn TreeExtraction::trees(self : TreeExtraction) -> Array[Tree] {
 }
 
 ///|
-pub fn TreeExtraction::tree_count(self : TreeExtraction) -> Int {
+pub fn TreeExtraction::tree_count(self : TreeExtraction) -> Int32 {
   self.trees.length()
 }
 
@@ -85,7 +85,7 @@ pub fn TreeExtraction::truncated(self : TreeExtraction) -> Bool {
 
 ///|
 /// Charged task steps, path comparisons, branch copies, child scheduling/merging.
-pub fn TreeExtraction::work(self : TreeExtraction) -> Int {
+pub fn TreeExtraction::work(self : TreeExtraction) -> Int32 {
   self.work
 }
 
@@ -93,14 +93,14 @@ pub fn TreeExtraction::work(self : TreeExtraction) -> Int {
 /// Persistent paths are branch-local; siblings do not poison each other's checks.
 priv enum TreeExtractPath {
   Empty
-  Link(Int, TreeExtractPath)
+  Link(Int32, TreeExtractPath)
 }
 
 ///|
 priv enum TreeExtractTask {
-  Visit(Int, Int, TreeExtractPath)
-  Choose(Int, Int, Int, TreeExtractPath)
-  Finish(Int, TreeSpan, Int, Bool)
+  Visit(Int32, Int32, TreeExtractPath)
+  Choose(Int32, Int32, Int32, TreeExtractPath)
+  Finish(Int32, TreeSpan, Int32, Bool)
 }
 
 ///|
@@ -121,7 +121,7 @@ priv struct TreeExtractor {
   limits : TreeLimits
   trees : Array[Tree]
   mut status : TreeExtractionStatus
-  mut work : Int
+  mut work : Int32
 }
 
 ///|
@@ -137,7 +137,7 @@ fn TreeExtractor::tick(self : TreeExtractor) -> Unit raise TreeExtractHalt {
 fn TreeExtractor::on_path(
   self : TreeExtractor,
   path : TreeExtractPath,
-  id : Int,
+  id : Int32,
 ) -> Bool raise TreeExtractHalt {
   let mut cursor = path
   while true {
@@ -182,7 +182,7 @@ fn TreeExtractor::family(
   state : TreeExtractState,
   node : Node,
   family : Family,
-  depth : Int,
+  depth : Int32,
   path : TreeExtractPath,
 ) -> Unit raise TreeExtractHalt {
   let symbol = node.kind is SymbolNode(_)
@@ -223,9 +223,9 @@ fn TreeExtractor::family(
 fn TreeExtractor::finish(
   self : TreeExtractor,
   state : TreeExtractState,
-  rule : Int,
+  rule : Int32,
   span : TreeSpan,
-  count : Int,
+  count : Int32,
   symbol : Bool,
 ) -> Unit raise TreeExtractHalt {
   if count > state.values.length() {
@@ -256,7 +256,7 @@ fn TreeExtractor::finish(
 /// Each deferred choice stores a clean frontier before this family's children.
 fn TreeExtractor::run(
   self : TreeExtractor,
-  root : Int,
+  root : Int32,
 ) -> Unit raise TreeExtractHalt {
   let agenda : Array[TreeExtractState] = [
     { tasks: [Visit(root, 1, Empty)], values: [], },
@@ -344,7 +344,7 @@ fn TreeExtractor::run(
 /// inconsistent internal forest references are Err; ordinary truncation is Ok.
 pub fn extract_trees(
   forest : Forest,
-  limits? : TreeLimits = default_tree_limits(),
+  limits~ : TreeLimits = default_tree_limits(),
 ) -> Result[TreeExtraction, Problem] {
   match limits.validate() {
     Err(problem) => return Err(problem)
@@ -376,7 +376,7 @@ pub fn extract_trees(
 ///|
 pub fn Forest::extract_trees(
   self : Forest,
-  limits? : TreeLimits = default_tree_limits(),
+  limits~ : TreeLimits = default_tree_limits(),
 ) -> Result[TreeExtraction, Problem] {
   extract_trees(self, limits~)
 }

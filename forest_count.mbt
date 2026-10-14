@@ -2,8 +2,8 @@
 /// Counts distinguish exact equality to the cap from actual saturation.
 /// Infinite means arbitrarily many finite derivation trees, not an infinite tree.
 pub(all) enum DerivationCount {
-  Finite(Int)
-  AtLeast(Int)
+  Finite(Int32)
+  AtLeast(Int32)
   Infinite
 } derive(Eq, Debug)
 
@@ -22,8 +22,8 @@ priv suberror ForestAnalysisHalt {
 /// A single cumulative budget covers fixed points, graph traversal and counting.
 priv struct ForestAnalysisBudget {
   name : String
-  limit : Int
-  mut used : Int
+  limit : Int32
+  mut used : Int32
 }
 
 ///|
@@ -39,7 +39,7 @@ fn ForestAnalysisBudget::tick(
 ///|
 fn forest_analysis_check_id(
   forest : Forest,
-  id : Int,
+  id : Int32,
 ) -> Unit raise ForestAnalysisHalt {
   if id < 0 || id >= forest.nodes.length() {
     raise ForestAnalysisHalt(InvalidNode(id))
@@ -103,7 +103,7 @@ fn forest_analysis_productive(
 
 ///|
 priv struct ForestCappedCount {
-  value : Int
+  value : Int32
   clipped : Bool
 }
 
@@ -112,7 +112,7 @@ priv struct ForestCappedCount {
 fn forest_count_add(
   a : ForestCappedCount,
   b : ForestCappedCount,
-  cap : Int,
+  cap : Int32,
 ) -> ForestCappedCount {
   if a.clipped || b.clipped || a.value > cap - b.value {
     { value: cap, clipped: true, }
@@ -126,7 +126,7 @@ fn forest_count_add(
 fn forest_count_multiply(
   a : ForestCappedCount,
   b : ForestCappedCount,
-  cap : Int,
+  cap : Int32,
 ) -> ForestCappedCount {
   if a.value == 0 || b.value == 0 {
     { value: 0, clipped: false, }
@@ -142,10 +142,10 @@ fn forest_count_multiply(
 /// Intermediate prefixes contribute no additional rule-choice multiplier.
 fn forest_count_node(
   forest : Forest,
-  id : Int,
+  id : Int32,
   productive : Array[Bool],
   counts : Array[ForestCappedCount],
-  cap : Int,
+  cap : Int32,
   budget : ForestAnalysisBudget,
 ) -> ForestCappedCount raise ForestAnalysisHalt {
   match forest.nodes[id].kind {
@@ -172,13 +172,15 @@ fn forest_count_node(
 /// Keep parallel child occurrences: dependency decrements mirror increments.
 fn forest_count_reachable_graph(
   forest : Forest,
-  root : Int,
+  root : Int32,
   productive : Array[Bool],
   budget : ForestAnalysisBudget,
-) -> (Array[Int], Array[Int], Array[Array[Int]]) raise ForestAnalysisHalt {
+) -> (Array[Int32], Array[Int32], Array[Array[Int32]]) raise ForestAnalysisHalt {
   let visited = Array::make(forest.nodes.length(), false)
   let pending = Array::make(forest.nodes.length(), 0)
-  let parents : Array[Array[Int]] = Array::makei(forest.nodes.length(), fn(_) {
+  let parents : Array[Array[Int32]] = Array::makei(forest.nodes.length(), fn(
+    _,
+  ) {
     []
   })
   let nodes = [root]
@@ -217,15 +219,15 @@ fn forest_count_reachable_graph(
 /// choosing productive exits each time, and therefore gives infinitely many trees.
 fn forest_count_evaluate(
   forest : Forest,
-  root : Int,
+  root : Int32,
   productive : Array[Bool],
-  cap : Int,
+  cap : Int32,
   budget : ForestAnalysisBudget,
 ) -> DerivationCount raise ForestAnalysisHalt {
   let (nodes, pending, parents) = forest_count_reachable_graph(
     forest, root, productive, budget,
   )
-  let ready : Array[Int] = []
+  let ready : Array[Int32] = []
   for id in nodes {
     budget.tick()
     if pending[id] == 0 {
@@ -265,8 +267,8 @@ fn forest_count_evaluate(
 /// across every pass; exhausted budgets are errors, never partial counts.
 pub fn Forest::count(
   self : Forest,
-  cap? : Int = 1000000,
-  work_limit? : Int = 1000000,
+  cap~ : Int32 = 1000000,
+  work_limit~ : Int32 = 1000000,
 ) -> Result[DerivationCount, Problem] {
   if cap <= 0 {
     return Err(InvalidLimit("cap"))

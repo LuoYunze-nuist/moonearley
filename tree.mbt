@@ -1,8 +1,8 @@
 ///|
 /// Half-open token-index interval, not the caller's Token.start/end units.
 pub(all) struct TreeSpan {
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -15,7 +15,7 @@ pub extend TreeSpan with @moonbitlang/core/debug.Debug::{to_repr}
 /// A real grammar production. Intermediate forest prefixes never become this node.
 pub(all) struct RuleTree {
   label : String
-  rule : Int
+  rule : Int32
   span : TreeSpan
   children : Array[Tree]
 } derive(Eq, Debug)
@@ -55,9 +55,9 @@ pub extend Tree with @moonbitlang/core/debug.Debug::{to_repr}
 
 ///|
 pub(all) struct TreeMetrics {
-  size : Int
-  depth : Int
-  tokens : Int
+  size : Int32
+  depth : Int32
+  tokens : Int32
 } derive(Eq, Debug)
 
 ///|
@@ -141,12 +141,12 @@ pub fn Tree::metrics(self : Tree) -> TreeMetrics {
 }
 
 ///|
-pub fn Tree::size(self : Tree) -> Int {
+pub fn Tree::size(self : Tree) -> Int32 {
   self.metrics().size
 }
 
 ///|
-pub fn Tree::depth(self : Tree) -> Int {
+pub fn Tree::depth(self : Tree) -> Int32 {
   self.metrics().depth
 }
 
