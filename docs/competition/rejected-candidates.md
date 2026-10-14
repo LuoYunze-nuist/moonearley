@@ -1,3 +1,5 @@
+> Historical source-inspection snapshot; later implementation and execution are recorded separately.
+
 # Rejected replacement candidates — public source evidence
 
 Research snapshot: 2026-10-14 (Asia/Shanghai). Source and test bodies were read; **no tests, builds, Moon commands, implementation, commits, account operations or registry writes were performed**. Only the four requested known hits were investigated. No MoonEarley or additional domain research.
@@ -192,3 +194,4 @@ Local official artifacts: `C:\Users\42673\.codex\competition-deliverables\LuoYun
 ## Limits and write-scope compliance
 
 These rejection decisions apply to the two stated scopes, not every possible Thrift transport or coding-theory project. No exhaustive uniqueness claim is made. Registry reservations were not altered; this evidence report is not a reservation or approval of MoonEarley. Only public registry, GitHub metadata/source and research-generated indexes were saved. All persisted outputs are inside this rejected-candidates folder.
+

@@ -74,3 +74,14 @@ Thrift 与 GF256 的完整固定 SHA、实际 API/源码/测试、精确发布 Z
 
 具体选题已确认；在独立仓库实现并预留指纹。GitHub、CI、Release、MoonCakes 的实际状态在 delivery 文档记录，不用本查重结论代替工程验收。
 
+
+## 交付前反向复核（2026-10-14）
+
+在不加载 Moon 凭据的新 MOON_HOME 下重跑 `moon search --limit 100`：earley 返回 10 个
+模糊命中，parse forest 返回 6 个，sppf/GLR 为零，GLL 命中 NMEA GLL 记录工具。
+模糊命中包括 React/reactor/grapheme、图结构、EPUB、iCalendar、Google API 和 games，
+没有把名称相似当成任务重合。moon-certified 已在固定源码树中检查相关路径；
+没有将其其他图算法能力误称为 CFG 森林。新的结果不改变前述源码/API 比较。
+账号绑定 GitHub repository search `language:MoonBit earley` 返回空列表；仍不是不存在证明。
+重新读取当前永久注册表的 parsing/parser/forest/Earley 标题与相关指纹，保留本项目预留，
+没有新增直接冲突证据。结论仍限于本记录的索引与源码范围。

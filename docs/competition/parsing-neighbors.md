@@ -1,3 +1,5 @@
+> Historical source-inspection snapshot; later implementation and execution are recorded separately.
+
 # Additional parsing substitute evidence
 
 No direct substitute for the full proposed scope found among these four in the inspected API/source/test scope. All are adjacent, with genuine overlaps documented below. This is not a global uniqueness or contest eligibility guarantee.
@@ -14,8 +16,8 @@ No direct substitute for the full proposed scope found among these four in the i
 ## sundaysebasidian-byte/moonabnf
 
 - Official docs: https://mooncakes.io/docs/sundaysebasidian-byte/moonabnf
-- Fixed source root: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/sundaysebasidian-byte__moonabnf/github/MoonABNF-323a3728c3faac0ca1052fb8f7590e98ee040156`
-- Pin: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/sundaysebasidian-byte__moonabnf/pin.json`
+- Fixed source root: `private pinned research snapshot (not distributed)`
+- Pin: `private pinned research snapshot (not distributed)`
 - Actual implementation/API evidence:
   - `pkg.generated.mbti:1` — https://github.com/sundaysebasidian-byte/MoonABNF/blob/323a3728c3faac0ca1052fb8f7590e98ee040156/pkg.generated.mbti#L1
   - `analysis.mbt:108` — https://github.com/sundaysebasidian-byte/MoonABNF/blob/323a3728c3faac0ca1052fb8f7590e98ee040156/analysis.mbt#L108
@@ -32,8 +34,8 @@ No direct substitute for the full proposed scope found among these four in the i
 ## bobzhang/peg
 
 - Official docs: https://mooncakes.io/docs/bobzhang/peg
-- Fixed source root: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/bobzhang__peg/github/peg.mbt-b51e271aaefa5aa06a065473245ad52219a9f5f9`
-- Pin: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/bobzhang__peg/pin.json`
+- Fixed source root: `private pinned research snapshot (not distributed)`
+- Pin: `private pinned research snapshot (not distributed)`
 - Actual implementation/API evidence:
   - `README.mbt.md:1` — https://github.com/bobzhang/peg.mbt/blob/b51e271aaefa5aa06a065473245ad52219a9f5f9/README.mbt.md#L1
   - `pkg.generated.mbti:1` — https://github.com/bobzhang/peg.mbt/blob/b51e271aaefa5aa06a065473245ad52219a9f5f9/pkg.generated.mbti#L1
@@ -51,8 +53,8 @@ No direct substitute for the full proposed scope found among these four in the i
 ## kokic/talcparsec
 
 - Official docs: https://mooncakes.io/docs/kokic/talcparsec
-- Fixed source root: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/kokic__talcparsec/github/talcparsec-39f787c6d2d5a158f1657eebf61b54edcaae7943`
-- Pin: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/kokic__talcparsec/pin.json`
+- Fixed source root: `private pinned research snapshot (not distributed)`
+- Pin: `private pinned research snapshot (not distributed)`
 - Actual implementation/API evidence:
   - `input.mbt:21` — https://github.com/kokic/talcparsec/blob/39f787c6d2d5a158f1657eebf61b54edcaae7943/input.mbt#L21
   - `parser.mbt:12` — https://github.com/kokic/talcparsec/blob/39f787c6d2d5a158f1657eebf61b54edcaae7943/parser.mbt#L12
@@ -69,8 +71,8 @@ No direct substitute for the full proposed scope found among these four in the i
 ## peter-jerry-ye/parser-combinator
 
 - Official docs: https://mooncakes.io/docs/peter-jerry-ye/parser-combinator
-- Fixed source root: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/peter-jerry-ye__parser-combinator/github/moonbit-parser-combinator-773e25361f397d80a4f1529c51b146e426b37a53`
-- Pin: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/peter-jerry-ye__parser-combinator/pin.json`
+- Fixed source root: `private pinned research snapshot (not distributed)`
+- Pin: `private pinned research snapshot (not distributed)`
 - Actual implementation/API evidence:
   - `parsec.mbt:2` — https://github.com/peter-jerry-ye/moonbit-parser-combinator/blob/773e25361f397d80a4f1529c51b146e426b37a53/parsec.mbt#L2
   - `parsec.mbt:20` — https://github.com/peter-jerry-ye/moonbit-parser-combinator/blob/773e25361f397d80a4f1529c51b146e426b37a53/parsec.mbt#L20
@@ -92,4 +94,5 @@ No direct substitute for the full proposed scope found among these four in the i
 - Tests were read only. No builds, test runs, generated-parser execution, implementation, Git/account/registry operations, or reservations were performed.
 
 Evidence inventory and all indexed test declarations: per-module `source-file-inventory.json` / `test-catalogue.json`; these catalogues do not mean every indexed test body was inspected.
-Public archive retrieval and checksum evidence: `C:/Users/42673/.codex/competition-deliverables/LuoYunze-nuist/replacement-research/additional-parsing-evidence/retrieval-ledger.json`.
+Public archive retrieval and checksum evidence: `private pinned research snapshot (not distributed)`.
+
