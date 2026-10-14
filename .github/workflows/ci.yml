@@ -1,0 +1,62 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  portable:
+    name: check-test-build (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [wasm-gc, wasm, js, native]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install official MoonBit toolchain
+        run: |
+          curl --fail --silent --show-error --location https://cli.moonbitlang.com/install/unix.sh -o "$RUNNER_TEMP/moon-install.sh"
+          bash "$RUNNER_TEMP/moon-install.sh"
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Record compiler and review generated interfaces
+        run: |
+          moon version --all
+          moon info
+          git diff --exit-code -- '*.mbti'
+          moon fmt --check
+      - name: Strict check build and tests
+        run: |
+          moon check --target ${{ matrix.target }} --deny-warn
+          moon build --target ${{ matrix.target }} --deny-warn
+          moon test --target ${{ matrix.target }} --deny-warn
+      - name: Run three downstream workflows
+        run: |
+          moon run examples/expression --target ${{ matrix.target }} --deny-warn
+          moon run examples/language_service --target ${{ matrix.target }} --deny-warn
+          moon run examples/grammar_qa --target ${{ matrix.target }} --deny-warn
+      - name: Audit substantive sources and meaningful history
+        if: matrix.target == 'js'
+        run: |
+          python3 scripts/audit_sources.py --require-production 1500
+          python3 scripts/audit_history.py --minimum-nonempty 20
+  lark-reference:
+    name: pinned Lark differential (252 cases)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: lark-parser/lark
+          ref: 9a4fb9c7458e8155636773a3cded0016d52516da
+          path: _reference-lark
+      - name: Install official MoonBit toolchain
+        run: |
+          curl --fail --silent --show-error --location https://cli.moonbitlang.com/install/unix.sh -o "$RUNNER_TEMP/moon-install.sh"
+          bash "$RUNNER_TEMP/moon-install.sh"
+          echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - run: python3 scripts/reference_check.py --lark-source _reference-lark --target js
+
