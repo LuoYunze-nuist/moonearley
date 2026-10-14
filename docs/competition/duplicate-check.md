@@ -1,10 +1,10 @@
-# 新项目三域候选复核（研究阶段）
+# MoonEarley 三域候选与语义查重记录
 
-日期：2026-10-14（Asia/Shanghai）。固定截止日期：2026-10-30 24:00。绑定账号：LuoYunze-nuist。本文件不是项目预留、实现、验收报告或申报书。
+日期：2026-10-14（Asia/Shanghai）。固定截止日期：2026-10-30 24:00。绑定账号：LuoYunze-nuist。本文件是公开工程查重记录，不是私人申报书。
 
 ## 授权边界
 
-保留用户原先明确的具体选题确认门禁：展示排序候选后，取得明确方向选择前，不追加新项目指纹，不初始化目标仓库，不写实现、不提交、不建远程或发布。最近的“继续/再搞一个”用于继续研究，不能冒充对 MoonEarley 这个具体方向的确认。账号统一按用户后来更正的 LuoYunze-nuist；不修改全局 Git 身份、不读取或展示凭据、不切换共享登录。旧 MoonQP、迁移副本和工作区其他文件不变。
+保留用户原先明确的具体选题确认门禁：展示排序候选后，取得明确方向选择前，不追加新项目指纹，不初始化目标仓库，不写实现、不提交、不建远程或发布。研究时曾等待具体选题确认；2026-10-14 用户明确回复“可以 按照skill自动化交付吧”，确认 MoonEarley。账号统一按用户后来更正的 LuoYunze-nuist；不修改全局 Git 身份、不读取或展示凭据、不切换共享登录。旧 MoonQP、迁移副本和工作区其他文件不变。
 
 ## 三个不同问题域：广度与工作流
 
@@ -22,7 +22,7 @@
 
 GitHub 的 earley/GLR/parse forest/context-free MoonBit 仓库与 earley/sppf/parse_forest 代码查询已保存，检索返回空列表不证明不存在。读取官方 awesome-moonbit 清单，追踪 MoonYacc。MoonCakes 模糊检索有大量不相关命中，逐一按真实任务而不是包名评估；核心高相邻项检查 README、API、实际实现与代表测试。
 
-已按域复核永久 project-registry.md 中相关条目/指纹，包含 MoonShard、MoonPeg、MoonCite、MoonPhone、MoonQP 与解析相关目录项。MoonPeg 的核心是 peg solitaire，不是 Parsing Expression Grammar。没有以“不重名”作通过理由。研究阶段不写注册表；若后续选择本方向，须在固定排他锁内重读再预留，不能用本次快照覆盖其他窗口新记录。
+已按域复核永久 project-registry.md 中相关条目/指纹，包含 MoonShard、MoonPeg、MoonCite、MoonPhone、MoonQP 与解析相关目录项。MoonPeg 的核心是 peg solitaire，不是 Parsing Expression Grammar。没有以“不重名”作通过理由。确认后已在固定排他锁内重读并原子追加 MoonEarley reserved 指纹及 external-checked 邻项，保留其他窗口历史。
 
 限制：仅覆盖当时可查询的公开索引、已保存的固定 SHA 源码与精确版本元数据；不保证覆盖未公开、未索引、尚未发布项目。GitHub HEAD 不冒充发布 ZIP；源码/测试阅读不冒充执行通过。公开网页搜索未返回可用结果，结论依靠已保存 CLI、官方 API、源码与测试证据。
 
@@ -52,7 +52,7 @@ MoonEarley 核心不是把几个现成辅助功能拼成“全套缺失”来声
 
 推荐方向查重结论：**在已记录检索范围内未发现成熟直接替代**。这是有限范围研究判断，不是赛事裁决或对整个生态的不存在证明。
 
-## 推荐方向功能边界（尚未实现）
+## 选定方向功能边界
 
 核心必须是外部 token 上的运行时 CFG 接受性与可查询共享压缩森林。支持左递归、可空规则和歧义；维护节点/packed family 资源预算；有界树提取与有限计数，正确区别生产性循环造成的无限推导；快照避免调用者数组变更污染结果。可空 completion 顺序与循环终止是正确性关键，而不是性能宣传。
 
@@ -64,12 +64,13 @@ MoonEarley 核心不是把几个现成辅助功能拼成“全套缺失”来声
 
 Python Lark（lark-parser/lark），固定 SHA 9a4fb9c7458e8155636773a3cded0016d52516da，MIT，Copyright © 2017 Erez Shinan。已读 LICENSE、lark/parsers/earley.py、earley_forest.py 的 SymbolNode/PackedNode，以及 tests/test_parser.py 的 test_earley_explicit_ambiguity、test_ambiguity1 和 tests/test_tree_forest_transformer.py 的身份/歧义转换测试。
 
-未来实现采用独立 MoonBit 重写其核心思路，不复制 GPL MoonYacc/AGPL 邻项代码；保留 Lark 许可与版权说明，明确只覆盖 token-based CFG/森林，不宣称完整 Lark 移植。对照测试固定上游版本与环境，实测后才记录数量/时间。本阶段未执行这些第三方测试，也没有项目实现测试可报告。
+实现采用独立 MoonBit 重写其核心思路，不复制 GPL MoonYacc/AGPL 邻项代码；保留 Lark 许可与版权说明，明确只覆盖 token-based CFG/森林，不宣称完整 Lark 移植。对照测试固定上游版本与环境，实测后才记录数量/时间。第三方源码阅读不冒充测试通过；项目验证另外记录。
 
 ## 淘汰证据
 
-Thrift 与 GF256 的完整固定 SHA、实际 API/源码/测试、精确发布 ZIP 校验和、维护与服务端 CI 信号见 rejected-candidates/source-evidence-matrix.md 及 JSON。Xpeng/moonthrift 与 zhaojun-coding/thrift 已覆盖所拟 Binary/Compact/RPC 核心；oyjh0381/moonerasure 已覆盖系统 GF256 k+m 编码/恢复、选择性恢复、增量校验。CAIMEOX/reed_solomon 是 GF32 码字纠错，不能用作 GF256 的直接淘汰依据。
+Thrift 与 GF256 的完整固定 SHA、实际 API/源码/测试、精确发布 ZIP 校验和、维护与服务端 CI 信号见 rejected-candidates.md。Xpeng/moonthrift 与 zhaojun-coding/thrift 已覆盖所拟 Binary/Compact/RPC 核心；oyjh0381/moonerasure 已覆盖系统 GF256 k+m 编码/恢复、选择性恢复、增量校验。CAIMEOX/reed_solomon 是 GF32 码字纠错，不能用作 GF256 的直接淘汰依据。
 
 ## 当前状态
 
-本轮仅研究证据；新目标目录/仓库、指纹预留、实现、提交、远程、CI、Release 和 MoonCakes 发布均未进行。中文申报书也尚未生成。交付前必须重跑查重、身份绑定、实现与工程门禁，不用本研究结论代替验收。
+具体选题已确认；在独立仓库实现并预留指纹。GitHub、CI、Release、MoonCakes 的实际状态在 delivery 文档记录，不用本查重结论代替工程验收。
+
