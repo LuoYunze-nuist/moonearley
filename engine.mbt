@@ -29,7 +29,8 @@ struct Engine {
   mut work : Int
 }
 
-///| A parse report is an immutable snapshot, including when a session later advances.
+///|
+/// A parse report is an immutable snapshot, including when a session later advances.
 pub struct Report {
   forest : Forest
   expected : Array[String]
@@ -52,7 +53,8 @@ pub fn Report::expected(self : Report) -> Array[String] {
   self.expected.copy()
 }
 
-///| Furthest chart with at least one state, in token indices rather than source offsets.
+///|
+/// Furthest chart with at least one state, in token indices rather than source offsets.
 pub fn Report::furthest(self : Report) -> Int {
   self.furthest
 }
@@ -70,8 +72,14 @@ fn Engine::tick(self : Engine) -> Unit raise Halt {
   self.work += 1
 }
 
-///| Node identity includes kind and token interval. Families may grow after parents refer to it.
-fn Engine::node_id(self : Engine, kind : NodeKind, start : Int, end : Int) -> Int raise Halt {
+///|
+/// Node identity includes kind and token interval. Families may grow after parents refer to it.
+fn Engine::node_id(
+  self : Engine,
+  kind : NodeKind,
+  start : Int,
+  end : Int,
+) -> Int raise Halt {
   for i, n in self.nodes {
     self.tick()
     if n.kind == kind && n.start == start && n.end == end {
@@ -82,12 +90,18 @@ fn Engine::node_id(self : Engine, kind : NodeKind, start : Int, end : Int) -> In
     raise Halt(Limit("nodes", self.limits.nodes))
   }
   let id = self.nodes.length()
-  self.nodes.push({ kind, start, end, families: [] })
+  self.nodes.push({ kind, start, end, families: [], })
   id
 }
 
-///| Pack families, not parse trees; duplicates of the same rule/children are idempotent.
-fn Engine::family(self : Engine, node : Int, rule : Int, children : Array[Int]) -> Unit raise Halt {
+///|
+/// Pack families, not parse trees; duplicates of the same rule/children are idempotent.
+fn Engine::family(
+  self : Engine,
+  node : Int,
+  rule : Int,
+  children : Array[Int],
+) -> Unit raise Halt {
   let target = self.nodes[node].families
   for f in target {
     self.tick()
@@ -98,12 +112,19 @@ fn Engine::family(self : Engine, node : Int, rule : Int, children : Array[Int]) 
   if self.family_count >= self.limits.families {
     raise Halt(Limit("families", self.limits.families))
   }
-  target.push({ rule, children: children.copy() })
+  target.push({ rule, children: children.copy(), })
   self.family_count += 1
 }
 
-///| Add one finite Earley state; additional families do not require state reprocessing.
-fn Engine::item(self : Engine, end : Int, rule : Int, dot : Int, origin : Int) -> Int raise Halt {
+///|
+/// Add one finite Earley state; additional families do not require state reprocessing.
+fn Engine::item(
+  self : Engine,
+  end : Int,
+  rule : Int,
+  dot : Int,
+  origin : Int,
+) -> Int raise Halt {
   let chart = self.charts[end]
   for it in chart.items {
     self.tick()
@@ -118,18 +139,24 @@ fn Engine::item(self : Engine, end : Int, rule : Int, dot : Int, origin : Int) -
   if dot == 0 {
     self.family(node, rule, [])
   }
-  chart.items.push({ rule, dot, origin, node })
+  chart.items.push({ rule, dot, origin, node, })
   self.item_count += 1
   node
 }
 
 ///|
-fn Engine::advance(self : Engine, end : Int, waiting : Item, child : Int) -> Unit raise Halt {
+fn Engine::advance(
+  self : Engine,
+  end : Int,
+  waiting : Item,
+  child : Int,
+) -> Unit raise Halt {
   let prefix = self.item(end, waiting.rule, waiting.dot + 1, waiting.origin)
   self.family(prefix, waiting.rule, [waiting.node, child])
 }
 
-///| Saturate prediction and completion before scanning. Pair both nullable insertion orders.
+///|
+/// Saturate prediction and completion before scanning. Pair both nullable insertion orders.
 fn Engine::close_chart(self : Engine, end : Int) -> Unit raise Halt {
   let chart = self.charts[end]
   while chart.cursor < chart.items.length() {
@@ -144,7 +171,8 @@ fn Engine::close_chart(self : Engine, end : Int) -> Unit raise Halt {
       for waiting in self.charts[item.origin].items.copy() {
         self.tick()
         let wr = self.grammar.rules[waiting.rule]
-        if waiting.dot < wr.rhs.length() && wr.rhs[waiting.dot] == Nonterminal(rule.lhs) {
+        if waiting.dot < wr.rhs.length() &&
+          wr.rhs[waiting.dot] == Nonterminal(rule.lhs) {
           self.advance(end, waiting, symbol)
         }
       }
@@ -162,7 +190,9 @@ fn Engine::close_chart(self : Engine, end : Int) -> Unit raise Halt {
           for complete in chart.items.copy() {
             self.tick()
             let cr = self.grammar.rules[complete.rule]
-            if complete.origin == end && complete.dot == cr.rhs.length() && cr.lhs == name {
+            if complete.origin == end &&
+              complete.dot == cr.rhs.length() &&
+              cr.lhs == name {
               let symbol = self.node_id(SymbolNode(name), end, end)
               self.family(symbol, complete.rule, [complete.node])
               self.advance(end, item, symbol)
@@ -176,8 +206,16 @@ fn Engine::close_chart(self : Engine, end : Int) -> Unit raise Halt {
 
 ///|
 fn Engine::new(grammar : Grammar, limits : Limits) -> Engine raise Halt {
-  let engine : Engine = { grammar, limits, charts: [{ items: [], cursor: 0 }],
-    nodes: [], tokens: [], item_count: 0, family_count: 0, work: 0 }
+  let engine : Engine = {
+    grammar,
+    limits,
+    charts: [{ items: [], cursor: 0, }],
+    nodes: [],
+    tokens: [],
+    item_count: 0,
+    family_count: 0,
+    work: 0,
+  }
   for i, rule in grammar.rules {
     if rule.lhs == grammar.start {
       ignore(engine.item(0, i, 0, 0))
@@ -187,18 +225,20 @@ fn Engine::new(grammar : Grammar, limits : Limits) -> Engine raise Halt {
   engine
 }
 
-///| Extend only the sealed last chart; earlier charts remain as completion origins.
+///|
+/// Extend only the sealed last chart; earlier charts remain as completion origins.
 fn Engine::append(self : Engine, token : Token) -> Unit raise Halt {
   let end = self.tokens.length()
   if end >= self.limits.tokens {
     raise Halt(Limit("tokens", self.limits.tokens))
   }
   self.tokens.push(token)
-  self.charts.push({ items: [], cursor: 0 })
+  self.charts.push({ items: [], cursor: 0, })
   for item in self.charts[end].items.copy() {
     self.tick()
     let rule = self.grammar.rules[item.rule]
-    if item.dot < rule.rhs.length() && rule.rhs[item.dot] == Terminal(token.kind) {
+    if item.dot < rule.rhs.length() &&
+      rule.rhs[item.dot] == Terminal(token.kind) {
       let leaf = self.node_id(TokenLeaf(end), end, end + 1)
       self.advance(end + 1, item, leaf)
     }
@@ -211,7 +251,9 @@ fn Engine::report(self : Engine) -> Report {
   let mut root = None
   let end = self.tokens.length()
   for i, node in self.nodes {
-    if node.kind == SymbolNode(self.grammar.start) && node.start == 0 && node.end == end {
+    if node.kind == SymbolNode(self.grammar.start) &&
+      node.start == 0 &&
+      node.end == end {
       root = Some(i)
     }
   }
@@ -232,19 +274,46 @@ fn Engine::report(self : Engine) -> Report {
     }
   }
   expected.sort()
-  let forest : Forest = { nodes: self.nodes.map(n => {
-      { kind: n.kind, start: n.start, end: n.end, families: n.families.map(copy_family) }
-    }), tokens: self.tokens.copy(), rules: self.grammar.rules.map(copy_rule), root }
-  { forest, expected, furthest, stats: {
-    tokens: end, items: self.item_count, nodes: self.nodes.length(),
-    families: self.family_count, work: self.work,
-  } }
+  let forest : Forest = {
+    nodes: self.nodes.map(n => {
+      kind: n.kind,
+      start: n.start,
+      end: n.end,
+      families: n.families.map(copy_family),
+    }),
+    tokens: self.tokens.copy(),
+    rules: self.grammar.rules.map(copy_rule),
+    root,
+  }
+  {
+    forest,
+    expected,
+    furthest,
+    stats: {
+      tokens: end,
+      items: self.item_count,
+      nodes: self.nodes.length(),
+      families: self.family_count,
+      work: self.work,
+    },
+  }
 }
 
-///| Recognize and preserve all derivations. Rejection is Ok(report); failure is Err(problem).
-pub fn parse(grammar : Grammar, tokens : Array[Token], limits? : Limits = default_limits()) -> Result[Report, Problem] {
-  match limits.validate() { Err(p) => return Err(p); Ok(_) => () }
-  match validate_tokens(tokens) { Err(p) => return Err(p); Ok(_) => () }
+///|
+/// Recognize and preserve all derivations. Rejection is Ok(report); failure is Err(problem).
+pub fn parse(
+  grammar : Grammar,
+  tokens : Array[Token],
+  limits? : Limits = default_limits(),
+) -> Result[Report, Problem] {
+  match limits.validate() {
+    Err(p) => return Err(p)
+    Ok(_) => ()
+  }
+  match validate_tokens(tokens) {
+    Err(p) => return Err(p)
+    Ok(_) => ()
+  }
   if tokens.length() > limits.tokens {
     return Err(Limit("tokens", limits.tokens))
   }
@@ -258,5 +327,3 @@ pub fn parse(grammar : Grammar, tokens : Array[Token], limits? : Limits = defaul
     Halt(p) => Err(p)
   }
 }
-
-

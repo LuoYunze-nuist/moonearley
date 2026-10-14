@@ -200,7 +200,9 @@ fn grammar_cycle_diagnostics(
   let components = grammar_cyclic_components(grammar.nonterminals(), graph)
   let diagnostics : Array[GrammarDiagnostic] = []
   for component in components {
-    let indices = grammar_component_rules(grammar, component, nullable, epsilon_only)
+    let indices = grammar_component_rules(
+      grammar, component, nullable, epsilon_only,
+    )
     // Every retained cyclic component necessarily has an internal edge.
     if !indices.is_empty() {
       let index = indices[0]
@@ -268,20 +270,27 @@ pub fn Grammar::lint(self : Grammar) -> Array[GrammarDiagnostic] {
     }
     match grammar_first_duplicate(self, index) {
       None => ()
-      Some(previous) => diagnostics.push({
-        kind: DuplicateExpansion,
-        rule_index: index,
-        rule_label: rule.label,
-        related_rules: [previous],
-        nonterminals: [rule.lhs],
-        message: "rule \{rule.label} duplicates expansion of \{self.rules[previous].label}",
-      })
+      Some(previous) =>
+        diagnostics.push({
+          kind: DuplicateExpansion,
+          rule_index: index,
+          rule_label: rule.label,
+          related_rules: [previous],
+          nonterminals: [rule.lhs],
+          message: "rule \{rule.label} duplicates expansion of \{self.rules[previous].label}",
+        })
     }
   }
-  for diagnostic in grammar_cycle_diagnostics(self, analysis.nullable_names, true) {
+  for
+    diagnostic in grammar_cycle_diagnostics(self, analysis.nullable_names, true) {
     diagnostics.push(diagnostic)
   }
-  for diagnostic in grammar_cycle_diagnostics(self, analysis.nullable_names, false) {
+  for
+    diagnostic in grammar_cycle_diagnostics(
+      self,
+      analysis.nullable_names,
+      false,
+    ) {
     diagnostics.push(diagnostic)
   }
   diagnostics.sort_by(fn(a, b) {

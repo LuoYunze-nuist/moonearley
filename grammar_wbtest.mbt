@@ -1,6 +1,6 @@
 ///|
 fn grammar_test_rule(lhs : String, rhs : Array[Symbol], label : String) -> Rule {
-  { lhs, rhs, label }
+  { lhs, rhs, label, }
 }
 
 ///|
@@ -10,16 +10,17 @@ test "grammar validates mandatory names and rule labels" {
   assert_true(Grammar::new("S", []) is Err(InvalidGrammar(_)))
   assert_true(Grammar::new("X", [epsilon]) is Err(InvalidGrammar(_)))
   assert_true(
-    Grammar::new("S", [grammar_test_rule("", [], "r")]) is Err(InvalidGrammar(_)),
+    Grammar::new("S", [grammar_test_rule("", [], "r")])
+    is Err(InvalidGrammar(_)),
   )
   assert_true(
-    Grammar::new("S", [grammar_test_rule("S", [], "")]) is Err(InvalidGrammar(_)),
+    Grammar::new("S", [grammar_test_rule("S", [], "")])
+    is Err(InvalidGrammar(_)),
   )
+  assert_true(Grammar::new("S", [epsilon, epsilon]) is Err(InvalidGrammar(_)))
   assert_true(
-    Grammar::new("S", [epsilon, epsilon]) is Err(InvalidGrammar(_)),
-  )
-  assert_true(
-    Grammar::new("S", [epsilon, grammar_test_rule("A", [], "empty")]) is Err(InvalidGrammar(_)),
+    Grammar::new("S", [epsilon, grammar_test_rule("A", [], "empty")])
+    is Err(InvalidGrammar(_)),
   )
 }
 
@@ -27,13 +28,15 @@ test "grammar validates mandatory names and rule labels" {
 test "grammar validates every reference and terminal including unused rules" {
   for symbol in [Terminal(""), Nonterminal(""), Nonterminal("missing")] {
     assert_true(
-      Grammar::new("S", [grammar_test_rule("S", [symbol], "bad")]) is Err(InvalidGrammar(_)),
+      Grammar::new("S", [grammar_test_rule("S", [symbol], "bad")])
+      is Err(InvalidGrammar(_)),
     )
     assert_true(
       Grammar::new("S", [
         grammar_test_rule("S", [], "start"),
         grammar_test_rule("Unused", [symbol], "bad"),
-      ]) is Err(InvalidGrammar(_)),
+      ])
+      is Err(InvalidGrammar(_)),
     )
   }
 }
@@ -57,7 +60,11 @@ test "grammar allows epsilon forward references cycles and labeled duplicates" {
 ///|
 test "grammar accessors sort deduplicate and preserve distinct symbol namespaces" {
   let g = Grammar::new("Z", [
-    grammar_test_rule("Z", [Terminal("A"), Terminal("z"), Nonterminal("A"), Terminal("A")], "z"),
+    grammar_test_rule(
+      "Z",
+      [Terminal("A"), Terminal("z"), Nonterminal("A"), Terminal("A")],
+      "z",
+    ),
     grammar_test_rule("A", [Terminal("a")], "a"),
     grammar_test_rule("Disconnected", [Terminal("unused")], "d"),
   ]).unwrap()
@@ -98,7 +105,11 @@ test "grammar owns nested input and output arrays with no aliasing" {
 ///|
 test "grammar treats unicode and whitespace as exact names" {
   let g = Grammar::new(" 起点 ", [
-    grammar_test_rule(" 起点 ", [Nonterminal("项"), Terminal(" ")], " 标签 "),
+    grammar_test_rule(
+      " 起点 ",
+      [Nonterminal("项"), Terminal(" ")],
+      " 标签 ",
+    ),
     grammar_test_rule("项", [], "ε"),
   ]).unwrap()
   assert_eq(g.start(), " 起点 ")

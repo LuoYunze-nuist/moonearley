@@ -9,7 +9,7 @@ pub struct Grammar {
 ///|
 /// Copy the mutable expansion while retaining immutable symbol/name values.
 fn grammar_copy_rule(rule : Rule) -> Rule {
-  { lhs: rule.lhs, rhs: rule.rhs.copy(), label: rule.label }
+  { lhs: rule.lhs, rhs: rule.rhs.copy(), label: rule.label, }
 }
 
 ///|
@@ -69,17 +69,20 @@ pub fn Grammar::new(
   for rule in owned {
     for position, symbol in rule.rhs {
       match symbol {
-        Terminal(kind) => {
+        Terminal(kind) =>
           if kind == "" {
             return Err(
-              InvalidGrammar("empty terminal kind in \{rule.label} at \{position}"),
+              InvalidGrammar(
+                "empty terminal kind in \{rule.label} at \{position}",
+              ),
             )
           }
-        }
         Nonterminal(name) => {
           if name == "" {
             return Err(
-              InvalidGrammar("empty nonterminal in \{rule.label} at \{position}"),
+              InvalidGrammar(
+                "empty nonterminal in \{rule.label} at \{position}",
+              ),
             )
           }
           if !definitions.contains(name) {
@@ -91,7 +94,7 @@ pub fn Grammar::new(
       }
     }
   }
-  Ok({ start, rules: owned })
+  Ok({ start, rules: owned, })
 }
 
 ///|
@@ -137,5 +140,3 @@ pub fn Grammar::terminals(self : Grammar) -> Array[String] {
 pub fn Grammar::rule_count(self : Grammar) -> Int {
   self.rules.length()
 }
-
-

@@ -6,6 +6,20 @@ import {
 }
 
 // Values
+pub fn default_frontend_limits() -> FrontendLimits
+
+pub fn default_limits() -> Limits
+
+pub fn default_tree_limits() -> TreeLimits
+
+pub fn export_grammar(Grammar) -> String
+
+pub fn extract_trees(Forest, limits? : TreeLimits) -> Result[TreeExtraction, Problem]
+
+pub fn parse(Grammar, Array[Token], limits? : Limits) -> Result[Report, Problem]
+
+pub fn parse_grammar(String, limits? : FrontendLimits) -> Result[Grammar, Problem]
+
 pub fn token(String, String, Int, Int) -> Token
 
 pub fn validate_tokens(Array[Token]) -> Result[Unit, Problem]
@@ -13,6 +27,198 @@ pub fn validate_tokens(Array[Token]) -> Result[Unit, Problem]
 // Errors
 
 // Types and methods
+pub(all) enum DerivationCount {
+  Finite(Int)
+  AtLeast(Int)
+  Infinite
+} derive(Eq, @debug.Debug)
+pub fn DerivationCount::equal(Self, Self) -> Bool
+pub fn DerivationCount::not_equal(Self, Self) -> Bool
+pub fn DerivationCount::to_repr(Self) -> @debug.Repr
+
+type Engine
+
+pub(all) struct Family {
+  rule : Int
+  children : Array[Int]
+} derive(Eq, @debug.Debug)
+pub fn Family::equal(Self, Self) -> Bool
+pub fn Family::not_equal(Self, Self) -> Bool
+pub fn Family::to_repr(Self) -> @debug.Repr
+
+pub struct FirstSet {
+  kinds : Array[String]
+  empty : Bool
+} derive(Eq, @debug.Debug)
+pub fn FirstSet::equal(Self, Self) -> Bool
+pub fn FirstSet::is_nullable(Self) -> Bool
+pub fn FirstSet::not_equal(Self, Self) -> Bool
+pub fn FirstSet::terminals(Self) -> Array[String]
+pub fn FirstSet::to_repr(Self) -> @debug.Repr
+
+pub struct FollowSet {
+  kinds : Array[String]
+  eof : Bool
+} derive(Eq, @debug.Debug)
+pub fn FollowSet::equal(Self, Self) -> Bool
+pub fn FollowSet::includes_eof(Self) -> Bool
+pub fn FollowSet::not_equal(Self, Self) -> Bool
+pub fn FollowSet::terminals(Self) -> Array[String]
+pub fn FollowSet::to_repr(Self) -> @debug.Repr
+
+pub struct Forest {
+  nodes : Array[Node]
+  tokens : Array[Token]
+  rules : Array[Rule]
+  root : Int?
+}
+pub fn Forest::ambiguity_nodes(Self, reachable_only? : Bool, work_limit? : Int) -> Result[Array[Int], Problem]
+pub fn Forest::count(Self, cap? : Int, work_limit? : Int) -> Result[DerivationCount, Problem]
+pub fn Forest::extract_trees(Self, limits? : TreeLimits) -> Result[TreeExtraction, Problem]
+pub fn Forest::node(Self, Int) -> Result[NodeInfo, Problem]
+pub fn Forest::node_count(Self) -> Int
+pub fn Forest::nodes_at_span(Self, Int, Int) -> Result[Array[Int], Problem]
+pub fn Forest::nodes_of_kind(Self, NodeKind) -> Array[Int]
+pub fn Forest::productive_nodes(Self, work_limit? : Int) -> Result[Array[Int], Problem]
+pub fn Forest::reachable_from(Self, Int, work_limit? : Int) -> Result[Array[Int], Problem]
+pub fn Forest::reachable_nodes(Self, work_limit? : Int) -> Result[Array[Int], Problem]
+pub fn Forest::root(Self) -> Int?
+pub fn Forest::rule_at(Self, Int) -> Result[Rule, Problem]
+pub fn Forest::rule_count(Self) -> Int
+pub fn Forest::symbol_nodes(Self, String) -> Array[Int]
+pub fn Forest::symbol_nodes_at(Self, String, Int, Int) -> Result[Array[Int], Problem]
+pub fn Forest::to_dot(Self, reachable_only? : Bool, work_limit? : Int) -> Result[String, Problem]
+pub fn Forest::token_at(Self, Int) -> Result[Token, Problem]
+pub fn Forest::token_count(Self) -> Int
+
+pub(all) struct FrontendLimits {
+  max_chars : Int
+  max_rules : Int
+  max_symbols : Int
+} derive(Eq, @debug.Debug)
+pub fn FrontendLimits::equal(Self, Self) -> Bool
+pub fn FrontendLimits::not_equal(Self, Self) -> Bool
+pub fn FrontendLimits::to_repr(Self) -> @debug.Repr
+pub fn FrontendLimits::validate(Self) -> Result[Unit, Problem]
+
+pub struct Grammar {
+  start : String
+  rules : Array[Rule]
+}
+pub fn Grammar::analyze(Self) -> GrammarAnalysis
+pub fn Grammar::first(Self, String) -> Result[FirstSet, Problem]
+pub fn Grammar::first_sequence(Self, Array[Symbol]) -> Result[FirstSet, Problem]
+pub fn Grammar::follow(Self, String) -> Result[FollowSet, Problem]
+pub fn Grammar::lint(Self) -> Array[GrammarDiagnostic]
+pub fn Grammar::new(String, Array[Rule]) -> Result[Self, Problem]
+pub fn Grammar::nonterminals(Self) -> Array[String]
+pub fn Grammar::nullable(Self) -> Array[String]
+pub fn Grammar::productive(Self) -> Array[String]
+pub fn Grammar::reachable(Self) -> Array[String]
+pub fn Grammar::rule_count(Self) -> Int
+pub fn Grammar::rules(Self) -> Array[Rule]
+pub fn Grammar::sets(Self) -> GrammarSets
+pub fn Grammar::start(Self) -> String
+pub fn Grammar::terminals(Self) -> Array[String]
+
+pub struct GrammarAnalysis {
+  nullable_names : Map[String, Bool]
+  productive_names : Map[String, Bool]
+  reachable_names : Map[String, Bool]
+  nullable_rules : Array[Bool]
+  productive_rules : Array[Bool]
+  reachable_rules : Array[Bool]
+}
+pub fn GrammarAnalysis::is_nullable(Self, String) -> Bool
+pub fn GrammarAnalysis::is_productive(Self, String) -> Bool
+pub fn GrammarAnalysis::is_reachable(Self, String) -> Bool
+pub fn GrammarAnalysis::nullable(Self) -> Array[String]
+pub fn GrammarAnalysis::productive(Self) -> Array[String]
+pub fn GrammarAnalysis::reachable(Self) -> Array[String]
+pub fn GrammarAnalysis::rule_is_nullable(Self, Int) -> Bool?
+pub fn GrammarAnalysis::rule_is_productive(Self, Int) -> Bool?
+pub fn GrammarAnalysis::rule_is_reachable(Self, Int) -> Bool?
+
+pub(all) struct GrammarDiagnostic {
+  kind : GrammarLintKind
+  rule_index : Int
+  rule_label : String
+  related_rules : Array[Int]
+  nonterminals : Array[String]
+  message : String
+} derive(Eq, @debug.Debug)
+pub fn GrammarDiagnostic::equal(Self, Self) -> Bool
+pub fn GrammarDiagnostic::not_equal(Self, Self) -> Bool
+pub fn GrammarDiagnostic::to_repr(Self) -> @debug.Repr
+
+pub(all) enum GrammarLintKind {
+  UnreachableRule
+  NonproductiveRule
+  DuplicateExpansion
+  NullableCycle
+  LeftRecursion
+} derive(Eq, @debug.Debug)
+pub fn GrammarLintKind::equal(Self, Self) -> Bool
+pub fn GrammarLintKind::not_equal(Self, Self) -> Bool
+pub fn GrammarLintKind::to_repr(Self) -> @debug.Repr
+
+pub struct GrammarSets {
+  names : Array[String]
+  nullable : Map[String, Bool]
+  first : Map[String, Map[String, Bool]]
+  follow : Map[String, Map[String, Bool]]
+  end_of_input : Map[String, Bool]
+}
+pub fn GrammarSets::first(Self, String) -> Result[FirstSet, Problem]
+pub fn GrammarSets::first_sequence(Self, Array[Symbol]) -> Result[FirstSet, Problem]
+pub fn GrammarSets::follow(Self, String) -> Result[FollowSet, Problem]
+pub fn GrammarSets::nonterminals(Self) -> Array[String]
+
+pub(all) struct Limits {
+  tokens : Int
+  items : Int
+  nodes : Int
+  families : Int
+  work : Int
+} derive(Eq, @debug.Debug)
+pub fn Limits::equal(Self, Self) -> Bool
+pub fn Limits::not_equal(Self, Self) -> Bool
+pub fn Limits::to_repr(Self) -> @debug.Repr
+pub fn Limits::validate(Self) -> Result[Unit, Problem]
+
+type Node
+
+pub(all) struct NodeInfo {
+  kind : NodeKind
+  start : Int
+  end : Int
+  alternatives : Array[Family]
+} derive(Eq, @debug.Debug)
+pub fn NodeInfo::equal(Self, Self) -> Bool
+pub fn NodeInfo::not_equal(Self, Self) -> Bool
+pub fn NodeInfo::to_repr(Self) -> @debug.Repr
+
+pub(all) enum NodeKind {
+  TokenLeaf(Int)
+  SymbolNode(String)
+  Intermediate(Int, Int)
+} derive(Eq, @debug.Debug)
+pub fn NodeKind::equal(Self, Self) -> Bool
+pub fn NodeKind::not_equal(Self, Self) -> Bool
+pub fn NodeKind::to_repr(Self) -> @debug.Repr
+
+pub(all) struct ParseDiagnostic {
+  token_index : Int
+  char_start : Int
+  char_end : Int
+  actual_kind : String?
+  expected_kinds : Array[String]
+  at_eof : Bool
+} derive(Eq, @debug.Debug)
+pub fn ParseDiagnostic::equal(Self, Self) -> Bool
+pub fn ParseDiagnostic::not_equal(Self, Self) -> Bool
+pub fn ParseDiagnostic::to_repr(Self) -> @debug.Repr
+
 pub(all) enum Problem {
   InvalidGrammar(String)
   InvalidToken(Int, String)
@@ -25,6 +231,20 @@ pub fn Problem::equal(Self, Self) -> Bool
 pub fn Problem::not_equal(Self, Self) -> Bool
 pub fn Problem::to_repr(Self) -> @debug.Repr
 
+pub struct Report {
+  forest : Forest
+  expected : Array[String]
+  furthest : Int
+  stats : Statistics
+}
+pub fn Report::accepted(Self) -> Bool
+pub fn Report::context(Self, Int) -> Result[Array[Token], Problem]
+pub fn Report::diagnostic(Self) -> ParseDiagnostic?
+pub fn Report::expected(Self) -> Array[String]
+pub fn Report::forest(Self) -> Forest
+pub fn Report::furthest(Self) -> Int
+pub fn Report::statistics(Self) -> Statistics
+
 pub(all) struct Rule {
   lhs : String
   rhs : Array[Symbol]
@@ -33,6 +253,36 @@ pub(all) struct Rule {
 pub fn Rule::equal(Self, Self) -> Bool
 pub fn Rule::not_equal(Self, Self) -> Bool
 pub fn Rule::to_repr(Self) -> @debug.Repr
+
+pub(all) struct RuleTree {
+  label : String
+  rule : Int
+  span : TreeSpan
+  children : Array[Tree]
+} derive(Eq, @debug.Debug)
+pub fn RuleTree::equal(Self, Self) -> Bool
+pub fn RuleTree::not_equal(Self, Self) -> Bool
+pub fn RuleTree::to_repr(Self) -> @debug.Repr
+
+pub struct Session {
+  engines : Array[Engine]
+}
+pub fn Session::fork(Self) -> Self
+pub fn Session::new(Grammar, limits? : Limits) -> Result[Self, Problem]
+pub fn Session::push(Self, Token) -> Result[Report, Problem]
+pub fn Session::push_all(Self, Array[Token]) -> Result[Report, Problem]
+pub fn Session::report(Self) -> Report
+
+pub(all) struct Statistics {
+  tokens : Int
+  items : Int
+  nodes : Int
+  families : Int
+  work : Int
+} derive(Eq, @debug.Debug)
+pub fn Statistics::equal(Self, Self) -> Bool
+pub fn Statistics::not_equal(Self, Self) -> Bool
+pub fn Statistics::to_repr(Self) -> @debug.Repr
 
 pub(all) enum Symbol {
   Terminal(String)
@@ -51,6 +301,78 @@ pub(all) struct Token {
 pub fn Token::equal(Self, Self) -> Bool
 pub fn Token::not_equal(Self, Self) -> Bool
 pub fn Token::to_repr(Self) -> @debug.Repr
+
+pub(all) struct TokenTree {
+  token : Token
+  span : TreeSpan
+} derive(Eq, @debug.Debug)
+pub fn TokenTree::equal(Self, Self) -> Bool
+pub fn TokenTree::not_equal(Self, Self) -> Bool
+pub fn TokenTree::to_repr(Self) -> @debug.Repr
+
+pub(all) enum Tree {
+  RuleNode(RuleTree)
+  TokenNode(TokenTree)
+} derive(Eq, @debug.Debug)
+pub fn Tree::copy(Self) -> Self
+pub fn Tree::depth(Self) -> Int
+pub fn Tree::equal(Self, Self) -> Bool
+pub fn Tree::metrics(Self) -> TreeMetrics
+pub fn Tree::not_equal(Self, Self) -> Bool
+pub fn Tree::rule_labels(Self) -> Array[String]
+pub fn Tree::size(Self) -> Int
+pub fn Tree::span(Self) -> TreeSpan
+pub fn Tree::to_repr(Self) -> @debug.Repr
+pub fn Tree::tokens(Self) -> Array[Token]
+
+pub struct TreeExtraction {
+  trees : Array[Tree]
+  status : TreeExtractionStatus
+  work : Int
+}
+pub fn TreeExtraction::status(Self) -> TreeExtractionStatus
+pub fn TreeExtraction::tree_count(Self) -> Int
+pub fn TreeExtraction::trees(Self) -> Array[Tree]
+pub fn TreeExtraction::truncated(Self) -> Bool
+pub fn TreeExtraction::work(Self) -> Int
+
+pub(all) struct TreeExtractionStatus {
+  tree_limit : Bool
+  depth_limit : Bool
+  work_limit : Bool
+  cycle_truncated : Bool
+} derive(Eq, @debug.Debug)
+pub fn TreeExtractionStatus::equal(Self, Self) -> Bool
+pub fn TreeExtractionStatus::not_equal(Self, Self) -> Bool
+pub fn TreeExtractionStatus::to_repr(Self) -> @debug.Repr
+pub fn TreeExtractionStatus::truncated(Self) -> Bool
+
+pub(all) struct TreeLimits {
+  max_trees : Int
+  max_depth : Int
+  work_budget : Int
+} derive(Eq, @debug.Debug)
+pub fn TreeLimits::equal(Self, Self) -> Bool
+pub fn TreeLimits::not_equal(Self, Self) -> Bool
+pub fn TreeLimits::to_repr(Self) -> @debug.Repr
+pub fn TreeLimits::validate(Self) -> Result[Unit, Problem]
+
+pub(all) struct TreeMetrics {
+  size : Int
+  depth : Int
+  tokens : Int
+} derive(Eq, @debug.Debug)
+pub fn TreeMetrics::equal(Self, Self) -> Bool
+pub fn TreeMetrics::not_equal(Self, Self) -> Bool
+pub fn TreeMetrics::to_repr(Self) -> @debug.Repr
+
+pub(all) struct TreeSpan {
+  start : Int
+  end : Int
+} derive(Eq, @debug.Debug)
+pub fn TreeSpan::equal(Self, Self) -> Bool
+pub fn TreeSpan::not_equal(Self, Self) -> Bool
+pub fn TreeSpan::to_repr(Self) -> @debug.Repr
 
 // Type aliases
 

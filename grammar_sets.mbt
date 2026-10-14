@@ -151,7 +151,12 @@ fn grammar_follow_tables(
         match symbol {
           Terminal(_) => ()
           Nonterminal(name) => {
-            let (suffix, empty) = grammar_first_suffix(rule.rhs, i + 1, nullable, first)
+            let (suffix, empty) = grammar_first_suffix(
+              rule.rhs,
+              i + 1,
+              nullable,
+              first,
+            )
             let target = table[name]
             if grammar_union_names(target, suffix) {
               changed = true
@@ -179,8 +184,10 @@ pub fn Grammar::sets(self : Grammar) -> GrammarSets {
   let names = self.nonterminals()
   let nullable = grammar_nullable_map(self)
   let first = grammar_first_table(self, names, nullable)
-  let (follow, end_of_input) = grammar_follow_tables(self, names, nullable, first)
-  { names, nullable, first, follow, end_of_input }
+  let (follow, end_of_input) = grammar_follow_tables(
+    self, names, nullable, first,
+  )
+  { names, nullable, first, follow, end_of_input, }
 }
 
 ///|
@@ -190,24 +197,34 @@ pub fn GrammarSets::nonterminals(self : GrammarSets) -> Array[String] {
 
 ///|
 /// Reject unknown names rather than returning a misleading empty FIRST row.
-pub fn GrammarSets::first(self : GrammarSets, name : String) -> Result[FirstSet, Problem] {
+pub fn GrammarSets::first(
+  self : GrammarSets,
+  name : String,
+) -> Result[FirstSet, Problem] {
   match self.first.get(name) {
-    None => Err(InvalidGrammar("FIRST requested for undefined nonterminal: \{name}"))
-    Some(kinds) => Ok({
-      kinds: grammar_sorted_names(kinds),
-      empty: self.nullable.contains(name),
-    })
+    None =>
+      Err(InvalidGrammar("FIRST requested for undefined nonterminal: \{name}"))
+    Some(kinds) =>
+      Ok({
+        kinds: grammar_sorted_names(kinds),
+        empty: self.nullable.contains(name),
+      })
   }
 }
 
 ///|
-pub fn GrammarSets::follow(self : GrammarSets, name : String) -> Result[FollowSet, Problem] {
+pub fn GrammarSets::follow(
+  self : GrammarSets,
+  name : String,
+) -> Result[FollowSet, Problem] {
   match self.follow.get(name) {
-    None => Err(InvalidGrammar("FOLLOW requested for undefined nonterminal: \{name}"))
-    Some(kinds) => Ok({
-      kinds: grammar_sorted_names(kinds),
-      eof: self.end_of_input.contains(name),
-    })
+    None =>
+      Err(InvalidGrammar("FOLLOW requested for undefined nonterminal: \{name}"))
+    Some(kinds) =>
+      Ok({
+        kinds: grammar_sorted_names(kinds),
+        eof: self.end_of_input.contains(name),
+      })
   }
 }
 
@@ -220,30 +237,45 @@ pub fn GrammarSets::first_sequence(
 ) -> Result[FirstSet, Problem] {
   for i, symbol in symbols {
     match symbol {
-      Terminal(kind) => {
+      Terminal(kind) =>
         if kind == "" {
-          return Err(InvalidGrammar("empty terminal kind in FIRST sequence at \{i}"))
+          return Err(
+            InvalidGrammar("empty terminal kind in FIRST sequence at \{i}"),
+          )
         }
-      }
-      Nonterminal(name) => {
+      Nonterminal(name) =>
         if !self.first.contains(name) {
-          return Err(InvalidGrammar("undefined nonterminal \{name} in FIRST sequence at \{i}"))
+          return Err(
+            InvalidGrammar(
+              "undefined nonterminal \{name} in FIRST sequence at \{i}",
+            ),
+          )
         }
-      }
     }
   }
-  let (kinds, empty) = grammar_first_suffix(symbols, 0, self.nullable, self.first)
-  Ok({ kinds: grammar_sorted_names(kinds), empty })
+  let (kinds, empty) = grammar_first_suffix(
+    symbols,
+    0,
+    self.nullable,
+    self.first,
+  )
+  Ok({ kinds: grammar_sorted_names(kinds), empty, })
 }
 
 ///|
 /// Convenience one-shot query. Reuse sets() when querying many symbols.
-pub fn Grammar::first(self : Grammar, name : String) -> Result[FirstSet, Problem] {
+pub fn Grammar::first(
+  self : Grammar,
+  name : String,
+) -> Result[FirstSet, Problem] {
   self.sets().first(name)
 }
 
 ///|
-pub fn Grammar::follow(self : Grammar, name : String) -> Result[FollowSet, Problem] {
+pub fn Grammar::follow(
+  self : Grammar,
+  name : String,
+) -> Result[FollowSet, Problem] {
   self.sets().follow(name)
 }
 

@@ -1,4 +1,5 @@
-///| Intermediate nodes encode one prefix of a production, not an AST node.
+///|
+/// Intermediate nodes encode one prefix of a production, not an AST node.
 pub(all) enum NodeKind {
   TokenLeaf(Int)
   SymbolNode(String)
@@ -11,7 +12,8 @@ pub extend NodeKind with Eq::{equal, not_equal}
 ///|
 pub extend NodeKind with @moonbitlang/core/debug.Debug::{to_repr}
 
-///| A family is an AND-edge; a node's families are OR-alternatives.
+///|
+/// A family is an AND-edge; a node's families are OR-alternatives.
 pub(all) struct Family {
   rule : Int
   children : Array[Int]
@@ -23,7 +25,8 @@ pub extend Family with Eq::{equal, not_equal}
 ///|
 pub extend Family with @moonbitlang/core/debug.Debug::{to_repr}
 
-///| Read-only snapshot view. Mutating its arrays cannot mutate the forest.
+///|
+/// Read-only snapshot view. Mutating its arrays cannot mutate the forest.
 pub(all) struct NodeInfo {
   kind : NodeKind
   start : Int
@@ -45,7 +48,8 @@ struct Node {
   families : Array[Family]
 }
 
-///| Forest IDs are local to this snapshot; spans here are token-index intervals.
+///|
+/// Forest IDs are local to this snapshot; spans here are token-index intervals.
 pub struct Forest {
   nodes : Array[Node]
   tokens : Array[Token]
@@ -55,12 +59,12 @@ pub struct Forest {
 
 ///|
 fn copy_family(f : Family) -> Family {
-  { rule: f.rule, children: f.children.copy() }
+  { rule: f.rule, children: f.children.copy(), }
 }
 
 ///|
 fn copy_rule(r : Rule) -> Rule {
-  { lhs: r.lhs, rhs: r.rhs.copy(), label: r.label }
+  { lhs: r.lhs, rhs: r.rhs.copy(), label: r.label, }
 }
 
 ///|
@@ -79,8 +83,12 @@ pub fn Forest::node(self : Forest, id : Int) -> Result[NodeInfo, Problem] {
     return Err(InvalidNode(id))
   }
   let n = self.nodes[id]
-  Ok({ kind: n.kind, start: n.start, end: n.end,
-    alternatives: n.families.map(copy_family) })
+  Ok({
+    kind: n.kind,
+    start: n.start,
+    end: n.end,
+    alternatives: n.families.map(copy_family),
+  })
 }
 
 ///|

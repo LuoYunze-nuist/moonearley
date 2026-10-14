@@ -1,6 +1,18 @@
 ///|
 test "forest views do not leak mutable family or rule arrays" {
-  let f : Forest = {nodes: [{kind: SymbolNode("s"), start: 0, end: 0, families: [{rule: 0, children: []}]}], tokens: [], rules: [{lhs: "s", rhs: [], label: "empty"}], root: Some(0)}
+  let f : Forest = {
+    nodes: [
+      {
+        kind: SymbolNode("s"),
+        start: 0,
+        end: 0,
+        families: [{ rule: 0, children: [], }],
+      },
+    ],
+    tokens: [],
+    rules: [{ lhs: "s", rhs: [], label: "empty", }],
+    root: Some(0),
+  }
   let view = f.node(0).unwrap()
   view.alternatives[0].children.push(42)
   view.alternatives.clear()

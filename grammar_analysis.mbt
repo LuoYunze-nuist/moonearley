@@ -47,7 +47,8 @@ fn grammar_nullable_map(grammar : Grammar) -> Map[String, Bool] {
   while changed {
     changed = false
     for rule in grammar.rules {
-      if !result.contains(rule.lhs) && grammar_sequence_nullable(rule.rhs, result) {
+      if !result.contains(rule.lhs) &&
+        grammar_sequence_nullable(rule.rhs, result) {
         ignore(grammar_add_name(result, rule.lhs))
         changed = true
       }
@@ -64,7 +65,8 @@ fn grammar_productive_map(grammar : Grammar) -> Map[String, Bool] {
   while changed {
     changed = false
     for rule in grammar.rules {
-      if !result.contains(rule.lhs) && grammar_sequence_productive(rule.rhs, result) {
+      if !result.contains(rule.lhs) &&
+        grammar_sequence_productive(rule.rhs, result) {
         ignore(grammar_add_name(result, rule.lhs))
         changed = true
       }
@@ -86,11 +88,10 @@ fn grammar_reachable_map(grammar : Grammar) -> Map[String, Bool] {
         for symbol in rule.rhs {
           match symbol {
             Terminal(_) => ()
-            Nonterminal(name) => {
+            Nonterminal(name) =>
               if grammar_add_name(result, name) {
                 changed = true
               }
-            }
           }
         }
       }
@@ -156,23 +157,35 @@ pub fn GrammarAnalysis::reachable(self : GrammarAnalysis) -> Array[String] {
 
 ///|
 /// Unknown names return false rather than introducing implicit definitions.
-pub fn GrammarAnalysis::is_nullable(self : GrammarAnalysis, name : String) -> Bool {
+pub fn GrammarAnalysis::is_nullable(
+  self : GrammarAnalysis,
+  name : String,
+) -> Bool {
   self.nullable_names.contains(name)
 }
 
 ///|
-pub fn GrammarAnalysis::is_productive(self : GrammarAnalysis, name : String) -> Bool {
+pub fn GrammarAnalysis::is_productive(
+  self : GrammarAnalysis,
+  name : String,
+) -> Bool {
   self.productive_names.contains(name)
 }
 
 ///|
-pub fn GrammarAnalysis::is_reachable(self : GrammarAnalysis, name : String) -> Bool {
+pub fn GrammarAnalysis::is_reachable(
+  self : GrammarAnalysis,
+  name : String,
+) -> Bool {
   self.reachable_names.contains(name)
 }
 
 ///|
 /// Safe index queries distinguish a negative/out-of-range index from false.
-pub fn GrammarAnalysis::rule_is_nullable(self : GrammarAnalysis, index : Int) -> Bool? {
+pub fn GrammarAnalysis::rule_is_nullable(
+  self : GrammarAnalysis,
+  index : Int,
+) -> Bool? {
   if index < 0 || index >= self.nullable_rules.length() {
     None
   } else {
@@ -181,7 +194,10 @@ pub fn GrammarAnalysis::rule_is_nullable(self : GrammarAnalysis, index : Int) ->
 }
 
 ///|
-pub fn GrammarAnalysis::rule_is_productive(self : GrammarAnalysis, index : Int) -> Bool? {
+pub fn GrammarAnalysis::rule_is_productive(
+  self : GrammarAnalysis,
+  index : Int,
+) -> Bool? {
   if index < 0 || index >= self.productive_rules.length() {
     None
   } else {
@@ -190,7 +206,10 @@ pub fn GrammarAnalysis::rule_is_productive(self : GrammarAnalysis, index : Int) 
 }
 
 ///|
-pub fn GrammarAnalysis::rule_is_reachable(self : GrammarAnalysis, index : Int) -> Bool? {
+pub fn GrammarAnalysis::rule_is_reachable(
+  self : GrammarAnalysis,
+  index : Int,
+) -> Bool? {
   if index < 0 || index >= self.reachable_rules.length() {
     None
   } else {

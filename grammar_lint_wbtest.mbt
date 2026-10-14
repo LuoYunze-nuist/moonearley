@@ -33,7 +33,10 @@ test "lint unreachable and nonproductive rules are independent expansion facts" 
   assert_eq(disconnected[0].message, "rule unused is unreachable from S")
   let nonproductive = grammar_test_findings(g, NonproductiveRule)
   assert_eq(nonproductive.map(fn(d) { d.rule_index }), [1, 2, 4])
-  assert_eq(nonproductive[0].message, "rule bad has no finite terminal derivation")
+  assert_eq(
+    nonproductive[0].message,
+    "rule bad has no finite terminal derivation",
+  )
   assert_true(g.productive().contains("S"))
   assert_eq(grammar_test_findings(g, LeftRecursion).length(), 2)
   assert_eq(grammar_test_findings(g, NullableCycle), [])
@@ -55,7 +58,10 @@ test "lint duplicate expansions compare symbols not labels or names alone" {
   assert_eq(duplicate[0].related_rules, [0])
   assert_eq(duplicate[1].related_rules, [0])
   assert_eq(duplicate[2].related_rules, [3])
-  assert_eq(duplicate[2].message, "rule terminal2 duplicates expansion of terminal")
+  assert_eq(
+    duplicate[2].message,
+    "rule terminal2 duplicates expansion of terminal",
+  )
   assert_eq(duplicate[2].nonterminals, ["S"])
   assert_eq(grammar_test_findings(g, NullableCycle), [])
   assert_eq(grammar_test_findings(g, LeftRecursion), [])
@@ -86,7 +92,11 @@ test "lint indirect left recursion skips nullable prefixes but not terminals" {
     grammar_test_rule("A", [Nonterminal("S"), Terminal("x")], "a"),
     grammar_test_rule("A", [Terminal("base")], "base"),
     grammar_test_rule("Empty", [], "empty"),
-    grammar_test_rule("Right", [Terminal("prefix"), Nonterminal("Right")], "right"),
+    grammar_test_rule(
+      "Right",
+      [Terminal("prefix"), Nonterminal("Right")],
+      "right",
+    ),
     grammar_test_rule("Right", [], "right_base"),
   ]).unwrap()
   let left = grammar_test_findings(g, LeftRecursion)
@@ -138,7 +148,10 @@ test "lint nullable cycles require nullable entire expansions" {
   assert_true(g.nullable().contains("S"))
   assert_eq(grammar_test_findings(g, NullableCycle), [])
   assert_eq(grammar_test_findings(g, LeftRecursion).length(), 2)
-  assert_eq(grammar_test_findings(g, NonproductiveRule).map(fn(d) { d.rule_index }), [0, 2])
+  assert_eq(
+    grammar_test_findings(g, NonproductiveRule).map(fn(d) { d.rule_index }),
+    [0, 2],
+  )
 }
 
 ///|
@@ -159,10 +172,15 @@ test "lint separate components nullable singleton and deterministic warning orde
   let all = g.lint()
   assert_eq(all, g.lint())
   assert_eq(all.map(fn(d) { (d.rule_index, d.kind) }), [
-    (1, UnreachableRule), (1, NullableCycle), (1, LeftRecursion),
+    (1, UnreachableRule),
+    (1, NullableCycle),
+    (1, LeftRecursion),
     (2, UnreachableRule),
-    (3, UnreachableRule), (3, NonproductiveRule), (3, LeftRecursion),
-    (4, UnreachableRule), (4, NonproductiveRule),
+    (3, UnreachableRule),
+    (3, NonproductiveRule),
+    (3, LeftRecursion),
+    (4, UnreachableRule),
+    (4, NonproductiveRule),
   ])
 }
 
@@ -201,4 +219,3 @@ test "lint long mutual cycle uses queues and reports one component not all paths
   assert_eq(diagnostics[0].rule_index, 0)
   assert_eq(diagnostics[0].related_rules[69], 69)
 }
-

@@ -2,12 +2,24 @@
 fn grammar_test_expression() -> Grammar {
   Grammar::new("E", [
     grammar_test_rule("E", [Nonterminal("T"), Nonterminal("Erest")], "e"),
-    grammar_test_rule("Erest", [Terminal("+"), Nonterminal("T"), Nonterminal("Erest")], "plus"),
+    grammar_test_rule(
+      "Erest",
+      [Terminal("+"), Nonterminal("T"), Nonterminal("Erest")],
+      "plus",
+    ),
     grammar_test_rule("Erest", [], "end_e"),
     grammar_test_rule("T", [Nonterminal("F"), Nonterminal("Trest")], "t"),
-    grammar_test_rule("Trest", [Terminal("*"), Nonterminal("F"), Nonterminal("Trest")], "times"),
+    grammar_test_rule(
+      "Trest",
+      [Terminal("*"), Nonterminal("F"), Nonterminal("Trest")],
+      "times",
+    ),
     grammar_test_rule("Trest", [], "end_t"),
-    grammar_test_rule("F", [Terminal("("), Nonterminal("E"), Terminal(")")], "paren"),
+    grammar_test_rule(
+      "F",
+      [Terminal("("), Nonterminal("E"), Terminal(")")],
+      "paren",
+    ),
     grammar_test_rule("F", [Terminal("id")], "id"),
   ]).unwrap()
 }
@@ -41,7 +53,11 @@ test "FIRST FOLLOW expression grammar nullable tails and nested start" {
 ///|
 test "sequence FIRST crosses only nullable prefixes and has independent epsilon" {
   let g = Grammar::new("S", [
-    grammar_test_rule("S", [Nonterminal("A"), Nonterminal("B"), Terminal("z")], "s"),
+    grammar_test_rule(
+      "S",
+      [Nonterminal("A"), Nonterminal("B"), Terminal("z")],
+      "s",
+    ),
     grammar_test_rule("A", [Terminal("a")], "a"),
     grammar_test_rule("A", [], "ae"),
     grammar_test_rule("B", [Terminal("b")], "b"),
@@ -59,10 +75,18 @@ test "sequence FIRST crosses only nullable prefixes and has independent epsilon"
   let empty = sets.first_sequence([]).unwrap()
   assert_eq(empty.terminals(), [])
   assert_true(empty.is_nullable())
-  let blocked = sets.first_sequence([Nonterminal("Dead"), Terminal("never")]).unwrap()
+  let blocked = sets
+    .first_sequence([Nonterminal("Dead"), Terminal("never")])
+    .unwrap()
   assert_eq(blocked.terminals(), [])
   assert_true(!blocked.is_nullable())
-  assert_eq(sets.first_sequence([Terminal("new"), Nonterminal("A")]).unwrap().terminals(), ["new"])
+  assert_eq(
+    sets
+    .first_sequence([Terminal("new"), Nonterminal("A")])
+    .unwrap()
+    .terminals(),
+    ["new"],
+  )
   assert_eq(sets.follow("A").unwrap().terminals(), ["b", "z"])
   assert_eq(sets.follow("B").unwrap().terminals(), ["z"])
   assert_true(!sets.follow("A").unwrap().includes_eof())
@@ -73,7 +97,9 @@ test "sequence FIRST crosses only nullable prefixes and has independent epsilon"
 test "FIRST queries validate the entire sequence including unreachable suffixes" {
   let sets = grammar_test_expression().sets()
   for symbol in [Nonterminal("Unknown"), Nonterminal(""), Terminal("")] {
-    assert_true(sets.first_sequence([Terminal("ok"), symbol]) is Err(InvalidGrammar(_)))
+    assert_true(
+      sets.first_sequence([Terminal("ok"), symbol]) is Err(InvalidGrammar(_)),
+    )
   }
   for name in ["", "Missing", "id"] {
     assert_true(sets.first(name) is Err(InvalidGrammar(_)))
@@ -84,7 +110,11 @@ test "FIRST queries validate the entire sequence including unreachable suffixes"
 ///|
 test "FOLLOW epsilon cycles repeated occurrences and EOF token collision" {
   let g = Grammar::new("S", [
-    grammar_test_rule("S", [Nonterminal("A"), Nonterminal("A"), Terminal("$")], "dollar"),
+    grammar_test_rule(
+      "S",
+      [Nonterminal("A"), Nonterminal("A"), Terminal("$")],
+      "dollar",
+    ),
     grammar_test_rule("S", [Nonterminal("B")], "b"),
     grammar_test_rule("A", [], "ae"),
     grammar_test_rule("A", [Terminal("a")], "a"),

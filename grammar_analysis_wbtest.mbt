@@ -107,4 +107,3 @@ test "analysis results are owned and independent across calls" {
   assert_eq(a.rule_is_productive(0), Some(true))
   assert_eq(a.rule_is_reachable(0), Some(true))
 }
-
