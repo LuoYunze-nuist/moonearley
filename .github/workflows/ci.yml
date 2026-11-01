@@ -24,7 +24,7 @@ jobs:
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
       - name: Record compiler and review generated interfaces
         run: |
-          moon version --all
+          python3 scripts/check_toolchain.py
           moon info
           git diff --exit-code -- '*.mbti'
           moon fmt --check
@@ -58,5 +58,7 @@ jobs:
           curl --fail --silent --show-error --location https://cli.moonbitlang.com/install/unix.sh -o "$RUNNER_TEMP/moon-install.sh"
           bash "$RUNNER_TEMP/moon-install.sh"
           echo "$HOME/.moon/bin" >> "$GITHUB_PATH"
+      - name: Require supported compiler
+        run: python3 scripts/check_toolchain.py
       - run: python3 scripts/reference_check.py --lark-source _reference-lark --target js
 

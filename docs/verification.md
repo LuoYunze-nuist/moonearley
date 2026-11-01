@@ -53,3 +53,26 @@ An independently installed official 20261012 toolchain canonicalized sources to
 Strict checks, builds, all 102 tests and three examples were repeated locally on
 JS, wasm and wasm-gc. This compatibility/format repair is not counted toward
 the twenty substantive development commits. Native remains CI-only.
+
+## 0.1.1 compiler acceptance revalidation — 2026-11-01
+
+The participant-provided acceptance guide now requires **moonc >= 0.10.16**.
+The original 0.1.0 record above remains historical. This patch was revalidated on
+Windows with the official moon 0.1.20261028 / moonc v0.10.18+6c83a7f62 toolchain.
+Run `python scripts/check_toolchain.py` before the other validation commands.
+All portable CI matrix jobs and the pinned Lark job enforce the same floor.
+The gate was exercised against real 0.10.15 (rejected) and 0.10.18 (accepted) installations.
+
+Strict check/build/test: 102/102 named tests on each of JS, wasm and wasm-gc;
+all three downstream examples run on each of those backends. The pinned Lark
+comparison still agrees on 252 acceptance/count vectors on JS and wasm-gc.
+An independent span-hypergraph oracle additionally compared 840 inputs over
+56 grammars on all three portable backends, including nullable permutations,
+productive/dead cycles and ordered rule-labeled ASTs. Separate mathematical
+fixtures verify exact/saturated Int32 counts and inclusive extraction depth limits.
+These are correctness checks, not performance claims.
+
+The generated interface changes only the legacy `Int` alias spelling to `Int32`;
+production MoonBit source and parsing semantics are unchanged. No local native
+success is claimed: Windows MSVC C++ tools/linker/SDK remain unavailable.
+Native must pass the CI run for the exact patch commit before publication.

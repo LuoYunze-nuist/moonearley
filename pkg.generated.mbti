@@ -20,7 +20,7 @@ pub fn parse(Grammar, Array[Token], limits? : Limits) -> Result[Report, Problem]
 
 pub fn parse_grammar(String, limits? : FrontendLimits) -> Result[Grammar, Problem]
 
-pub fn token(String, String, Int, Int) -> Token
+pub fn token(String, String, Int32, Int32) -> Token
 
 pub fn validate_tokens(Array[Token]) -> Result[Unit, Problem]
 
@@ -28,8 +28,8 @@ pub fn validate_tokens(Array[Token]) -> Result[Unit, Problem]
 
 // Types and methods
 pub(all) enum DerivationCount {
-  Finite(Int)
-  AtLeast(Int)
+  Finite(Int32)
+  AtLeast(Int32)
   Infinite
 } derive(Eq, @debug.Debug)
 pub fn DerivationCount::equal(Self, Self) -> Bool
@@ -39,8 +39,8 @@ pub fn DerivationCount::to_repr(Self) -> @debug.Repr
 type Engine
 
 pub(all) struct Family {
-  rule : Int
-  children : Array[Int]
+  rule : Int32
+  children : Array[Int32]
 } derive(Eq, @debug.Debug)
 pub fn Family::equal(Self, Self) -> Bool
 pub fn Family::not_equal(Self, Self) -> Bool
@@ -70,31 +70,31 @@ pub struct Forest {
   nodes : Array[Node]
   tokens : Array[Token]
   rules : Array[Rule]
-  root : Int?
+  root : Int32?
 }
-pub fn Forest::ambiguity_nodes(Self, reachable_only? : Bool, work_limit? : Int) -> Result[Array[Int], Problem]
-pub fn Forest::count(Self, cap? : Int, work_limit? : Int) -> Result[DerivationCount, Problem]
+pub fn Forest::ambiguity_nodes(Self, reachable_only? : Bool, work_limit? : Int32) -> Result[Array[Int32], Problem]
+pub fn Forest::count(Self, cap? : Int32, work_limit? : Int32) -> Result[DerivationCount, Problem]
 pub fn Forest::extract_trees(Self, limits? : TreeLimits) -> Result[TreeExtraction, Problem]
-pub fn Forest::node(Self, Int) -> Result[NodeInfo, Problem]
-pub fn Forest::node_count(Self) -> Int
-pub fn Forest::nodes_at_span(Self, Int, Int) -> Result[Array[Int], Problem]
-pub fn Forest::nodes_of_kind(Self, NodeKind) -> Array[Int]
-pub fn Forest::productive_nodes(Self, work_limit? : Int) -> Result[Array[Int], Problem]
-pub fn Forest::reachable_from(Self, Int, work_limit? : Int) -> Result[Array[Int], Problem]
-pub fn Forest::reachable_nodes(Self, work_limit? : Int) -> Result[Array[Int], Problem]
-pub fn Forest::root(Self) -> Int?
-pub fn Forest::rule_at(Self, Int) -> Result[Rule, Problem]
-pub fn Forest::rule_count(Self) -> Int
-pub fn Forest::symbol_nodes(Self, String) -> Array[Int]
-pub fn Forest::symbol_nodes_at(Self, String, Int, Int) -> Result[Array[Int], Problem]
-pub fn Forest::to_dot(Self, reachable_only? : Bool, work_limit? : Int) -> Result[String, Problem]
-pub fn Forest::token_at(Self, Int) -> Result[Token, Problem]
-pub fn Forest::token_count(Self) -> Int
+pub fn Forest::node(Self, Int32) -> Result[NodeInfo, Problem]
+pub fn Forest::node_count(Self) -> Int32
+pub fn Forest::nodes_at_span(Self, Int32, Int32) -> Result[Array[Int32], Problem]
+pub fn Forest::nodes_of_kind(Self, NodeKind) -> Array[Int32]
+pub fn Forest::productive_nodes(Self, work_limit? : Int32) -> Result[Array[Int32], Problem]
+pub fn Forest::reachable_from(Self, Int32, work_limit? : Int32) -> Result[Array[Int32], Problem]
+pub fn Forest::reachable_nodes(Self, work_limit? : Int32) -> Result[Array[Int32], Problem]
+pub fn Forest::root(Self) -> Int32?
+pub fn Forest::rule_at(Self, Int32) -> Result[Rule, Problem]
+pub fn Forest::rule_count(Self) -> Int32
+pub fn Forest::symbol_nodes(Self, String) -> Array[Int32]
+pub fn Forest::symbol_nodes_at(Self, String, Int32, Int32) -> Result[Array[Int32], Problem]
+pub fn Forest::to_dot(Self, reachable_only? : Bool, work_limit? : Int32) -> Result[String, Problem]
+pub fn Forest::token_at(Self, Int32) -> Result[Token, Problem]
+pub fn Forest::token_count(Self) -> Int32
 
 pub(all) struct FrontendLimits {
-  max_chars : Int
-  max_rules : Int
-  max_symbols : Int
+  max_chars : Int32
+  max_rules : Int32
+  max_symbols : Int32
 } derive(Eq, @debug.Debug)
 pub fn FrontendLimits::equal(Self, Self) -> Bool
 pub fn FrontendLimits::not_equal(Self, Self) -> Bool
@@ -115,7 +115,7 @@ pub fn Grammar::nonterminals(Self) -> Array[String]
 pub fn Grammar::nullable(Self) -> Array[String]
 pub fn Grammar::productive(Self) -> Array[String]
 pub fn Grammar::reachable(Self) -> Array[String]
-pub fn Grammar::rule_count(Self) -> Int
+pub fn Grammar::rule_count(Self) -> Int32
 pub fn Grammar::rules(Self) -> Array[Rule]
 pub fn Grammar::sets(Self) -> GrammarSets
 pub fn Grammar::start(Self) -> String
@@ -135,15 +135,15 @@ pub fn GrammarAnalysis::is_reachable(Self, String) -> Bool
 pub fn GrammarAnalysis::nullable(Self) -> Array[String]
 pub fn GrammarAnalysis::productive(Self) -> Array[String]
 pub fn GrammarAnalysis::reachable(Self) -> Array[String]
-pub fn GrammarAnalysis::rule_is_nullable(Self, Int) -> Bool?
-pub fn GrammarAnalysis::rule_is_productive(Self, Int) -> Bool?
-pub fn GrammarAnalysis::rule_is_reachable(Self, Int) -> Bool?
+pub fn GrammarAnalysis::rule_is_nullable(Self, Int32) -> Bool?
+pub fn GrammarAnalysis::rule_is_productive(Self, Int32) -> Bool?
+pub fn GrammarAnalysis::rule_is_reachable(Self, Int32) -> Bool?
 
 pub(all) struct GrammarDiagnostic {
   kind : GrammarLintKind
-  rule_index : Int
+  rule_index : Int32
   rule_label : String
-  related_rules : Array[Int]
+  related_rules : Array[Int32]
   nonterminals : Array[String]
   message : String
 } derive(Eq, @debug.Debug)
@@ -175,11 +175,11 @@ pub fn GrammarSets::follow(Self, String) -> Result[FollowSet, Problem]
 pub fn GrammarSets::nonterminals(Self) -> Array[String]
 
 pub(all) struct Limits {
-  tokens : Int
-  items : Int
-  nodes : Int
-  families : Int
-  work : Int
+  tokens : Int32
+  items : Int32
+  nodes : Int32
+  families : Int32
+  work : Int32
 } derive(Eq, @debug.Debug)
 pub fn Limits::equal(Self, Self) -> Bool
 pub fn Limits::not_equal(Self, Self) -> Bool
@@ -190,8 +190,8 @@ type Node
 
 pub(all) struct NodeInfo {
   kind : NodeKind
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
   alternatives : Array[Family]
 } derive(Eq, @debug.Debug)
 pub fn NodeInfo::equal(Self, Self) -> Bool
@@ -199,18 +199,18 @@ pub fn NodeInfo::not_equal(Self, Self) -> Bool
 pub fn NodeInfo::to_repr(Self) -> @debug.Repr
 
 pub(all) enum NodeKind {
-  TokenLeaf(Int)
+  TokenLeaf(Int32)
   SymbolNode(String)
-  Intermediate(Int, Int)
+  Intermediate(Int32, Int32)
 } derive(Eq, @debug.Debug)
 pub fn NodeKind::equal(Self, Self) -> Bool
 pub fn NodeKind::not_equal(Self, Self) -> Bool
 pub fn NodeKind::to_repr(Self) -> @debug.Repr
 
 pub(all) struct ParseDiagnostic {
-  token_index : Int
-  char_start : Int
-  char_end : Int
+  token_index : Int32
+  char_start : Int32
+  char_end : Int32
   actual_kind : String?
   expected_kinds : Array[String]
   at_eof : Bool
@@ -221,11 +221,11 @@ pub fn ParseDiagnostic::to_repr(Self) -> @debug.Repr
 
 pub(all) enum Problem {
   InvalidGrammar(String)
-  InvalidToken(Int, String)
-  Limit(String, Int)
-  InvalidNode(Int)
+  InvalidToken(Int32, String)
+  Limit(String, Int32)
+  InvalidNode(Int32)
   InvalidLimit(String)
-  Syntax(Int, String)
+  Syntax(Int32, String)
 } derive(Eq, @debug.Debug)
 pub fn Problem::equal(Self, Self) -> Bool
 pub fn Problem::not_equal(Self, Self) -> Bool
@@ -234,15 +234,15 @@ pub fn Problem::to_repr(Self) -> @debug.Repr
 pub struct Report {
   forest : Forest
   expected : Array[String]
-  furthest : Int
+  furthest : Int32
   stats : Statistics
 }
 pub fn Report::accepted(Self) -> Bool
-pub fn Report::context(Self, Int) -> Result[Array[Token], Problem]
+pub fn Report::context(Self, Int32) -> Result[Array[Token], Problem]
 pub fn Report::diagnostic(Self) -> ParseDiagnostic?
 pub fn Report::expected(Self) -> Array[String]
 pub fn Report::forest(Self) -> Forest
-pub fn Report::furthest(Self) -> Int
+pub fn Report::furthest(Self) -> Int32
 pub fn Report::statistics(Self) -> Statistics
 
 pub(all) struct Rule {
@@ -256,7 +256,7 @@ pub fn Rule::to_repr(Self) -> @debug.Repr
 
 pub(all) struct RuleTree {
   label : String
-  rule : Int
+  rule : Int32
   span : TreeSpan
   children : Array[Tree]
 } derive(Eq, @debug.Debug)
@@ -274,11 +274,11 @@ pub fn Session::push_all(Self, Array[Token]) -> Result[Report, Problem]
 pub fn Session::report(Self) -> Report
 
 pub(all) struct Statistics {
-  tokens : Int
-  items : Int
-  nodes : Int
-  families : Int
-  work : Int
+  tokens : Int32
+  items : Int32
+  nodes : Int32
+  families : Int32
+  work : Int32
 } derive(Eq, @debug.Debug)
 pub fn Statistics::equal(Self, Self) -> Bool
 pub fn Statistics::not_equal(Self, Self) -> Bool
@@ -295,8 +295,8 @@ pub fn Symbol::to_repr(Self) -> @debug.Repr
 pub(all) struct Token {
   kind : String
   text : String
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
 } derive(Eq, @debug.Debug)
 pub fn Token::equal(Self, Self) -> Bool
 pub fn Token::not_equal(Self, Self) -> Bool
@@ -315,12 +315,12 @@ pub(all) enum Tree {
   TokenNode(TokenTree)
 } derive(Eq, @debug.Debug)
 pub fn Tree::copy(Self) -> Self
-pub fn Tree::depth(Self) -> Int
+pub fn Tree::depth(Self) -> Int32
 pub fn Tree::equal(Self, Self) -> Bool
 pub fn Tree::metrics(Self) -> TreeMetrics
 pub fn Tree::not_equal(Self, Self) -> Bool
 pub fn Tree::rule_labels(Self) -> Array[String]
-pub fn Tree::size(Self) -> Int
+pub fn Tree::size(Self) -> Int32
 pub fn Tree::span(Self) -> TreeSpan
 pub fn Tree::to_repr(Self) -> @debug.Repr
 pub fn Tree::tokens(Self) -> Array[Token]
@@ -328,13 +328,13 @@ pub fn Tree::tokens(Self) -> Array[Token]
 pub struct TreeExtraction {
   trees : Array[Tree]
   status : TreeExtractionStatus
-  work : Int
+  work : Int32
 }
 pub fn TreeExtraction::status(Self) -> TreeExtractionStatus
-pub fn TreeExtraction::tree_count(Self) -> Int
+pub fn TreeExtraction::tree_count(Self) -> Int32
 pub fn TreeExtraction::trees(Self) -> Array[Tree]
 pub fn TreeExtraction::truncated(Self) -> Bool
-pub fn TreeExtraction::work(Self) -> Int
+pub fn TreeExtraction::work(Self) -> Int32
 
 pub(all) struct TreeExtractionStatus {
   tree_limit : Bool
@@ -348,9 +348,9 @@ pub fn TreeExtractionStatus::to_repr(Self) -> @debug.Repr
 pub fn TreeExtractionStatus::truncated(Self) -> Bool
 
 pub(all) struct TreeLimits {
-  max_trees : Int
-  max_depth : Int
-  work_budget : Int
+  max_trees : Int32
+  max_depth : Int32
+  work_budget : Int32
 } derive(Eq, @debug.Debug)
 pub fn TreeLimits::equal(Self, Self) -> Bool
 pub fn TreeLimits::not_equal(Self, Self) -> Bool
@@ -358,17 +358,17 @@ pub fn TreeLimits::to_repr(Self) -> @debug.Repr
 pub fn TreeLimits::validate(Self) -> Result[Unit, Problem]
 
 pub(all) struct TreeMetrics {
-  size : Int
-  depth : Int
-  tokens : Int
+  size : Int32
+  depth : Int32
+  tokens : Int32
 } derive(Eq, @debug.Debug)
 pub fn TreeMetrics::equal(Self, Self) -> Bool
 pub fn TreeMetrics::not_equal(Self, Self) -> Bool
 pub fn TreeMetrics::to_repr(Self) -> @debug.Repr
 
 pub(all) struct TreeSpan {
-  start : Int
-  end : Int
+  start : Int32
+  end : Int32
 } derive(Eq, @debug.Debug)
 pub fn TreeSpan::equal(Self, Self) -> Bool
 pub fn TreeSpan::not_equal(Self, Self) -> Bool

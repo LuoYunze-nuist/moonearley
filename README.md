@@ -3,12 +3,16 @@
 MoonBit 运行时 CFG 解析基础库：接收调用者提供的 token，支持左递归、可空规则和歧义，
 将推导保存在可查询的共享 packed forest 中，而不是提前选择一棵树。
 
-模块：`LuoYunze-nuist/moonearley@0.1.0`。许可证：MIT。
+模块：`LuoYunze-nuist/moonearley@0.1.1`。许可证：MIT。
 
 ## 安装和最小调用
 
+环境要求：MoonBit 编译器 `moonc >= 0.10.16` 和 Python 3。当前验证使用官方
+`moon 0.1.20261028` / `moonc v0.10.18+6c83a7f62`，支持 JS、wasm、wasm-gc 和 native。
+Native 另需本机 C 编译器、链接器和平台 SDK；Windows 本地未具备时由 Linux CI 验证。
+
 ```sh
-moon add LuoYunze-nuist/moonearley@0.1.0
+moon add LuoYunze-nuist/moonearley@0.1.1
 ```
 
 在消费者 `moon.pkg` 中加入：
@@ -86,6 +90,7 @@ moon run examples/grammar_qa --target js --deny-warn
 ## 验证
 
 ```sh
+python scripts/check_toolchain.py
 moon info && moon fmt
 moon fmt --check
 moon check --target wasm-gc --deny-warn
@@ -95,10 +100,11 @@ python scripts/audit_sources.py --require-production 1500
 python scripts/audit_history.py --minimum-nonempty 20
 ```
 
-本地 Windows / moon 0.1.20261012 / moonc v0.10.15+943464bfa：
+本地 Windows / moon 0.1.20261028 / moonc v0.10.18+6c83a7f62：
 102 个命名测试在 wasm-gc、wasm、JS 各全通过；三个示例各目标运行。
 独立 span-oracle 992 识别用例；固定 Lark SHA 的 252 接受性与推导数对照在 JS、wasm-gc 一致。
-不是性能比较。Native 本机缺少 cc/gcc/clang，不宣称本地已执行；CI 含 native job。
+不是性能比较。Native 本机缺少完整 C 工具链与 SDK，不宣称本地已执行；CI 含 native job。
+CI 各后端及 Lark 对照任务都会在检查前强制验证编译器版本下限。
 当前版本测试结果与 CI 链接见仓库 Actions，实质规模和方法见 `docs/verification.md`。
 
 外部对照（先检出固定上游，不依赖 PyPI 浮动版本）：

@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 — 2026-11-01
+
+- Require moonc >= 0.10.16 and enforce the compiler floor in all CI validation jobs.
+- Document and revalidate with the official October 28 toolchain (moonc 0.10.18).
+- Keep the runtime parsing API and grammar/forest semantics unchanged.
+
 ## 0.1.0 — 2026-10-14
 
 - Runtime typed token-kind CFGs, validated snapshots, bounded text syntax and canonical export.
